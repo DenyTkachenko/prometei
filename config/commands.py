@@ -50,7 +50,7 @@ COMMANDS = {
         "description": "Change contact phone number",
     },
     "add-birthday": {
-        "handler": add-birthday,
+        "handler": add_birthday,
         "args_required": {"name": name_validator, "birthday": birthday_validator},
         "args_optional": {},
         "step_prompts": {
