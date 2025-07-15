@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from config.general import INCOME_BIRTHDAY_FORMAT
 from utils.date import date_to_readable_format
 from utils.custom_exceptions import BirthdayFormatException
@@ -13,8 +13,8 @@ def validate_args(args, arg_order, validators):
         if validator:
             try:
                 validated_args[arg_name] = validator(value)
-            except ValueError as e:
-                print(f"❌ Error in '{arg_name}': {e}")
+            except Exception as e:
+                print(f"❌ Error with argument '{arg_name}': {e}")
                 return None
         else:
             validated_args[arg_name] = value
@@ -43,8 +43,8 @@ def phone_validator(value):
 
 def birthday_validator(value):
     try:
-        date_obj = datetime.strptime(value.strip(), INCOME_BIRTHDAY_FORMAT).date()
-        return date_obj
+        datetime.strptime(value.strip(), INCOME_BIRTHDAY_FORMAT).date()
+        return value
     except ValueError:
         readable_format = date_to_readable_format(INCOME_BIRTHDAY_FORMAT)
         raise BirthdayFormatException(expected_format=readable_format)

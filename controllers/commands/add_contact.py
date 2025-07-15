@@ -2,7 +2,7 @@ from models.record import Record
 from utils.decorators import input_error
 
 @input_error('add', ['name', 'phone'], ["birthday"])
-def add_contact(args, address_book):
+def add_contact(args, address_book, **kwargs):
     name, phone, birthday, *_ = args
     record = address_book.find(name)
     message = f"🔁 Contact '{name}' updated with phone 📞 {phone}"

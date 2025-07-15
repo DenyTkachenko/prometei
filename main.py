@@ -1,77 +1,52 @@
-from models.address_book import AddressBook
-from utils.helpers import parse_input
+# main.py
+
 from storage.pickle_storage import PickleStorage
-from config.commands import COMMANDS
-from utils.validators import validate_args, get_validators
+from models.address_book      import AddressBook
+from views.cli_interface      import CLIInterface
+from controllers.core         import CommandContext, CommandProcessor, ProcessorResult
 
 
-def main():
-    storage = PickleStorage[AddressBook](
-        filename="addressbook.pkl",
-        factory=AddressBook,
-        backup=True
-    )
+def create_context() -> CommandContext:
+    """
+    Initialize storage and load the address book.
+    Returns a CommandContext holding shared state.
+    """
+    storage      = PickleStorage("addressbook.pkl", factory=AddressBook, backup=True)
     address_book = storage.load()
-    print("Welcome to the assistant bot!")
-    state = None
+    return CommandContext(storage=storage, address_book=address_book)
 
-    while True:
-        if state is None:
-            user_input = input("📥 Enter a command: ").strip()
-            command_name, args = parse_input(user_input)
-            cmd_conf = COMMANDS.get(command_name)
 
-            if not cmd_conf:
-                print("⚠️ Invalid command.")
-                continue
+def main() -> None:
+    """
+    Entry point for the CLI.
+    Runs a loop, prompting for commands or arguments, and dispatching them to the processor.
+    """
+    context   = create_context()
+    interface = CLIInterface()
+    processor = CommandProcessor(context)
 
-            required = list(cmd_conf.get("args_required", {}).keys())
-            optional = list(cmd_conf.get("args_optional", {}).keys())
-            arg_order = required + optional
-            validators = get_validators(cmd_conf)
+    # First prompt: ask for a command
+    result = ProcessorResult("📥 Enter a command (type 'help'): ", expect_input=True)
 
-            validated_args = validate_args(args, arg_order, validators)
-            if validated_args is None:
-                continue  # restart input loop on validation failure
-
-            state = {
-                "command": command_name,
-                "args": validated_args,
-            }
-
-        cmd_conf = COMMANDS[state["command"]]
-        required = list(cmd_conf.get("args_required", {}).keys())
-        optional = list(cmd_conf.get("args_optional", {}).keys())
-        arg_order = required + optional
-        validators = get_validators(cmd_conf)
-
-        # Collect missing arguments step-by-step
-        missing_args = [arg for arg in arg_order if arg not in state["args"]]
-
-        if not missing_args:
-            # All arguments collected, call handler
-            ordered_args = [state["args"].get(arg) for arg in arg_order]
-            result = cmd_conf["handler"](ordered_args, address_book, storage)
-            print(f"✅ {result}")
-            state = None
-            continue
-
-        next_arg = missing_args[0]
-        prompt = cmd_conf["step_prompts"].get(next_arg, f"Enter {next_arg}: ")
-        answer = input(prompt).strip()
-
-        if not answer and next_arg in optional:
-            state["args"][next_arg] = None
-            continue
-
-        validator = validators.get(next_arg)
-        if validator:
-            try:
-                state["args"][next_arg] = validator(answer)
-            except ValueError as e:
-                print(f"❌ Error in '{next_arg}': {e}")
+    # Main loop: continue until a handler sets context.running = False
+    while context.running:
+        if result.expect_input:
+            # If processor asked for input, use that as our prompt
+            user_text = interface.receive_message(user_id=0, prompt=result.text)
         else:
-            state["args"][next_arg] = answer
+            # Otherwise, display the result and then re‑prompt for a new command
+            interface.send_message(user_id=0, text=result.text)
+            user_text = interface.receive_message(
+                user_id=0,
+                prompt="📥 Enter a command (type 'help'): "
+            )
+
+        # Feed the user’s text back into the processor
+        result = processor.process_message(user_id=0, message=user_text)
+
+    # Once context.running is False, exit
+    interface.send_message(user_id=0, text="👋 Goodbye!")
+
 
 if __name__ == "__main__":
     main()

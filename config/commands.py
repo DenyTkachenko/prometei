@@ -1,6 +1,6 @@
 from controllers.commands.add_contact import add_contact
 from controllers.commands.exit import exit_handler
-from utils.validators import *
+from utils.validators import name_validator, phone_validator, birthday_validator
 
 COMMANDS = {
     "exit": {
@@ -22,9 +22,9 @@ COMMANDS = {
         "args_required": {"name": name_validator, "phone": phone_validator},
         "args_optional": {"birthday": birthday_validator},
         "step_prompts": {
-            "name": "👤Enter the name of the contact:",
-            "phone": "📞Enter the phone number:",
-            "birthday": "🎂Enter the birthday (optional):",
+            "name": "👤Enter the name of the contact: ",
+            "phone": "📞Enter the phone number: ",
+            "birthday": "🎂Enter the birthday (optional): ",
         },
         "description": "Add a new contact",
     },
