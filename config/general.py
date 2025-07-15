@@ -1,0 +1,3 @@
+
+INCOME_BIRTHDAY_FORMAT = '%d.%m.%Y'
+OUT_BIRTHDAY_FORMAT = '%d.%m.%Y'
