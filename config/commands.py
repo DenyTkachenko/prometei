@@ -1,4 +1,5 @@
 from controllers.commands.add_contact import add_contact
+from controllers.commands.show_all import show_all
 from controllers.commands.exit import exit_handler
 from utils.validators import name_validator, phone_validator, birthday_validator
 
@@ -27,5 +28,12 @@ COMMANDS = {
             "birthday": "🎂Enter the birthday (optional): ",
         },
         "description": "Add a new contact",
+    },
+    "all": {
+        "handler": show_all,
+        "args_required": {},
+        "args_optional": {},
+        "step_prompts": {},
+        "description": "Display all contacts",
     },
 }

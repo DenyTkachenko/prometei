@@ -35,7 +35,8 @@ def main() -> None:
             user_text = interface.receive_message(user_id=0, prompt=result.text)
         else:
             # Otherwise, display the result and then re‑prompt for a new command
-            interface.send_message(user_id=0, text=result.text)
+            if result.text:
+                interface.send_message(user_id=0, text=result.text)
             user_text = interface.receive_message(
                 user_id=0,
                 prompt="📥 Enter a command (type 'help'): "
@@ -43,9 +44,6 @@ def main() -> None:
 
         # Feed the user’s text back into the processor
         result = processor.process_message(user_id=0, message=user_text)
-
-    # Once context.running is False, exit
-    interface.send_message(user_id=0, text="👋 Goodbye!")
 
 
 if __name__ == "__main__":
