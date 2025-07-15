@@ -1,6 +1,7 @@
 from controllers.commands.add_contact import add_contact
 from controllers.commands.show_all import show_all
 from controllers.commands.exit import exit_handler
+from controllers.commands.change_contact import change_contact
 from utils.validators import name_validator, phone_validator, birthday_validator
 
 COMMANDS = {
@@ -36,4 +37,15 @@ COMMANDS = {
         "step_prompts": {},
         "description": "Display all contacts",
     },
+    "change":{
+        "handler": change_contact,
+        "args_required": {"name": name_validator, "old_phone": phone_validator, "new_phone": phone_validator},
+        "args_optional": {},
+        "step_prompts": {
+            "name": "👤Enter the name of the contact: ",
+            "old_phone": "📞Enter the old phone number: ",
+            "new_phone": "📞Enter the new phone number: ",
+        },
+        "description": "Change contact phone number",
+    }
 }
