@@ -3,6 +3,7 @@ from controllers.commands.show_all import show_all
 from controllers.commands.add_contact import add_contact
 from controllers.commands.add_birthday import add_birthday
 from controllers.commands.change_contact import change_contact
+from controllers.commands.show_phone import show_phone
 from utils.validators import name_validator, phone_validator, birthday_validator
 
 COMMANDS = {
@@ -58,5 +59,14 @@ COMMANDS = {
             "birthday": "🎂Enter the birthday: ",
         },
         "description": "Change contact birthday",
-    }
+    },
+    "show_phone": {
+        "handler": show_phone,
+        "args_required": {"name": name_validator},
+        "args_optional": {},
+        "step_prompts": {
+            "name": "👤Enter the name of the contact: ",
+        },
+        "description": "Show user phone number",
+    },
 }
