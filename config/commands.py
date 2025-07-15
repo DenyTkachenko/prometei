@@ -1,6 +1,7 @@
-from controllers.commands.add_contact import add_contact
-from controllers.commands.show_all import show_all
 from controllers.commands.exit import exit_handler
+from controllers.commands.show_all import show_all
+from controllers.commands.add_contact import add_contact
+from controllers.commands.add_birthday import add_birthday
 from controllers.commands.change_contact import change_contact
 from utils.validators import name_validator, phone_validator, birthday_validator
 
@@ -47,5 +48,15 @@ COMMANDS = {
             "new_phone": "📞Enter the new phone number: ",
         },
         "description": "Change contact phone number",
+    },
+    "add-birthday": {
+        "handler": add-birthday,
+        "args_required": {"name": name_validator, "birthday": birthday_validator},
+        "args_optional": {},
+        "step_prompts": {
+            "name": "👤Enter the name of the contact: ",
+            "birthday": "🎂Enter the birthday: ",
+        },
+        "description": "Change contact birthday",
     }
 }
