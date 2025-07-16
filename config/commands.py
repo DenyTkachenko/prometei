@@ -5,6 +5,7 @@ from controllers.commands.email import change_email, remove_email
 from controllers.commands.phone import change_phone, show_phone
 from controllers.commands.record import add_contact, modify_contact
 from controllers.commands.birthday import add_birthday, show_birthdays
+from controllers.commands.find_user import find_user
 from utils.validators import name_validator, phone_validator, birthday_validator, days_validator,email_validator, address_validator
 from controllers.commands.exit import exit_handler
 
@@ -182,4 +183,13 @@ COMMANDS = {
         "step_prompts": {},
         "description": "Display all notes",
     },
+    "find_user": {
+        "handler": find_user,
+        "args_required": {},
+        "args_optional": {"name": name_validator},
+        "step_prompts": {
+            "query": "🔍 Введіть, кого ви шукаєте: ",
+        },
+        "description": "Пошук контакту по всім полям (ім'я, телефон, email, адреса, дата нар.)"
+    }
 }
