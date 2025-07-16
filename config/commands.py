@@ -186,10 +186,10 @@ COMMANDS = {
     "find_user": {
         "handler": find_user,
         "args_required": {},
-        "args_optional": {"name": name_validator},
+        "args_optional": {"query": str},
         "step_prompts": {
-            "query": "🔍 Введіть, кого ви шукаєте: ",
+            "query": " 🔍Enter search query (name, phone, emails, address, birthday): "
         },
-        "description": "Пошук контакту по всім полям (ім'я, телефон, email, адреса, дата нар.)"
+        "description": "Find user by query",
     }
 }

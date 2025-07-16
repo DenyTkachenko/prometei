@@ -10,7 +10,7 @@ def search(record):
             continue
 
         try:
-            if attr == "phones":
+            if attr == "phones" or attr == "emails":
                 parts.append(" ".join(p.value for p in value))
             else:
                 parts.append(value.value)
