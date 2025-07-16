@@ -7,7 +7,7 @@ init(autoreset=True)
 class ContactTableRenderer(BaseRenderer):
     def render(self, records: list[dict]) -> str:
         if not records:
-            return Fore.YELLOW + "📭 Контактів не знайдено." + Style.RESET_ALL
+            return Fore.YELLOW + "📭 No contacts found." + Style.RESET_ALL
 
         headers = records[0].keys()
 
