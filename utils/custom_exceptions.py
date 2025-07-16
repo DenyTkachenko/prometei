@@ -1,3 +1,7 @@
+class EmailValueException(Exception):
+    def __init__(self, message='Incorrect email format.'):
+        super().__init__(message)
+
 class PhoneValueException(Exception):
     def __init__(self, message='Phone number should be 10 digits!'):
         super().__init__(message)

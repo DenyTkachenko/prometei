@@ -1,7 +1,9 @@
-from datetime import datetime, date
+import re
+from datetime import datetime
 from config.general import INCOME_BIRTHDAY_FORMAT
 from utils.date import date_to_readable_format
-from utils.custom_exceptions import BirthdayFormatException
+from utils.custom_exceptions import BirthdayFormatException, EmailValueException, PhoneValueException
+
 
 def validate_args(args, arg_order, validators):
     validated_args = {}
@@ -33,12 +35,12 @@ def name_validator(value):
 
 def phone_validator(value):
     if not isinstance(value, str):
-        raise ValueError("Phone number must be a string.")
+        raise PhoneValueException("Phone number must be a string.")
     digits = value.strip()
     if not digits.isdigit():
-        raise ValueError("Phone number must contain only digits.")
+        raise PhoneValueException("Phone number must contain only digits.")
     if len(digits) != 10:
-        raise ValueError("Phone number must be exactly 10 digits long.")
+        raise PhoneValueException("Phone number must be exactly 10 digits long.")
     return digits
 
 def birthday_validator(value):
@@ -48,3 +50,19 @@ def birthday_validator(value):
     except ValueError:
         readable_format = date_to_readable_format(INCOME_BIRTHDAY_FORMAT)
         raise BirthdayFormatException(expected_format=readable_format)
+
+def email_validator(value):
+    if not isinstance(value, str):
+        raise EmailValueException("Email must be a string.")
+    email = value.strip()
+    if not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', email):
+        raise EmailValueException("Invalid email format.")
+    return email
+
+def address_validator(value):
+    if not isinstance(value, str):
+        raise ValueError("Address must be a string.")
+    address = value.strip()
+    if len(address) < 4 :
+        raise ValueError("The address can't be that short.")
+    return address
