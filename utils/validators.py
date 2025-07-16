@@ -48,3 +48,8 @@ def birthday_validator(value):
     except ValueError:
         readable_format = date_to_readable_format(INCOME_BIRTHDAY_FORMAT)
         raise BirthdayFormatException(expected_format=readable_format)
+
+def days_validator(value):
+    if not value.isdigit():
+        raise ValueError("Value must be an integer.")
+    return int(value)
