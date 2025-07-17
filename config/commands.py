@@ -4,7 +4,7 @@ from controllers.commands.email import change_email, remove_email
 from controllers.commands.phone import change_phone, show_phone
 from controllers.commands.record import add_contact, modify_contact
 from controllers.commands.show_all import show_all
-from controllers.commands.birthday import add_birthday
+from controllers.commands.birthday import add_birthday, show_birthdays
 from utils.validators import name_validator, phone_validator, birthday_validator, days_validator,email_validator, address_validator
 
 COMMANDS = {
