@@ -1,6 +1,7 @@
 from prettytable import PrettyTable
 from colorama import init, Fore, Style
 from views.interfaces import BaseRenderer
+from config.general import table_headers_map
 
 init(autoreset=True)
 
@@ -12,7 +13,7 @@ class ContactTableRenderer(BaseRenderer):
         headers = records[0].keys()
 
         colored_headers = [
-            Fore.CYAN + Style.BRIGHT + self._emoji_header(field) + Style.RESET_ALL
+            Fore.CYAN + Style.BRIGHT + self._header(field) + Style.RESET_ALL
             for field in headers
         ]
 
@@ -25,14 +26,5 @@ class ContactTableRenderer(BaseRenderer):
 
         return table.get_string()
 
-    def _emoji_header(self, key: str) -> str:
-
-        emoji_map = {
-            "name": "👤 Name",
-            "phones": "📞 Phones",
-            "email": "📩 Email",
-            "birthday": "🎂 Birthday",
-            "address": "📍 Address",
-            "congratulation_date": "🎉 Congratulation Date",
-        }
-        return emoji_map.get(key, key.capitalize())
+    def _header(self, key: str) -> str:
+        return table_headers_map.get(key, key.capitalize())
