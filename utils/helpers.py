@@ -15,3 +15,13 @@ def record_to_dict(record):
         )
         for field in fields
     }
+
+
+def notes_to_dict(record):
+    fields = ["title", "description"]
+    return {
+        field: (
+            getattr(getattr(record, field, None), "value", "-")
+        )
+        for field in fields
+    }

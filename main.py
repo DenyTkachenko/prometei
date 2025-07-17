@@ -1,9 +1,9 @@
 # main.py
 
-from storage.pickle_storage import PickleStorage
-from models.address_book      import AddressBook
-from views.cli_interface      import CLIInterface
-from controllers.core         import CommandContext, CommandProcessor, ProcessorResult
+from storage.pickle_storage                import PickleStorage
+from models.address_book.address_book      import AddressBook
+from views.cli_interface                   import CLIInterface
+from controllers.core                      import CommandContext, CommandProcessor, ProcessorResult
 
 
 def create_context() -> CommandContext:

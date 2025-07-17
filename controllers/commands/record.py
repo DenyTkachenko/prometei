@@ -1,4 +1,4 @@
-from models.record import Record
+from models.address_book.record import Record
 from utils.decorators import input_error
 from utils.custom_exceptions import UserNotExistException
 
