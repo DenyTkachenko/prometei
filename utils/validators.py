@@ -16,7 +16,7 @@ def validate_args(args, arg_order, validators):
             try:
                 validated_args[arg_name] = validator(value)
             except Exception as e:
-                print(f"❌ Error with argument '{arg_name}': {e}")
+                print(f"❌ Error '{arg_name}': {e}\n")
                 return None
         else:
             validated_args[arg_name] = value
