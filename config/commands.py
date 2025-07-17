@@ -1,4 +1,5 @@
 from controllers.commands.address import add_address, remove_address
+from controllers.commands.address_book.show_all import show_all
 from controllers.commands.exit import exit_handler
 from controllers.commands.email import change_email, remove_email
 from controllers.commands.phone import change_phone, show_phone

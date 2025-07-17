@@ -9,4 +9,6 @@ table_headers_map = {
     "birthday": "🎂 Birthday",
     "address": "📍 Address",
     "congratulation_date": "🎉 Congratulation Date",
+    "title": "💬 Title",
+    "description": "📝 Description",
 }
