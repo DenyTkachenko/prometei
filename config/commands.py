@@ -3,9 +3,15 @@ from controllers.commands.exit import exit_handler
 from controllers.commands.email import change_email, remove_email
 from controllers.commands.phone import change_phone, show_phone
 from controllers.commands.record import add_contact, modify_contact
-from controllers.commands.show_all import show_all
 from controllers.commands.birthday import add_birthday, show_birthdays
 from utils.validators import name_validator, phone_validator, birthday_validator, days_validator,email_validator, address_validator
+from controllers.commands.exit import exit_handler
+
+from controllers.commands.notes.add_note import add_note
+from controllers.commands.notes.change_note import change_note
+from controllers.commands.notes.find_note import find_note
+from controllers.commands.notes.remove_note import remove_note
+from controllers.commands.notes.show_all_notes import show_all_notes
 
 COMMANDS = {
     "exit": {
@@ -133,5 +139,46 @@ COMMANDS = {
             "days": "📅 Enter the number of days to check for upcoming birthdays (default is 7): ",
         },
         "description": "Show upcoming birthdays",
+    },
+    # ********************
+    "add_note": {
+        "handler": add_note,
+        "args_required": {"title": name_validator, "description": name_validator},
+        "args_optional": {},
+        "step_prompts": {
+            "title": "Enter the title of the note: ",
+            "description": "Enter the description: ",
+        },
+        "description": "Add a new note",
+    },
+    "change_note":{
+        "handler": change_note,
+        "args_required": {"title": name_validator, "description": name_validator},
+        "args_optional": {},
+        "step_prompts": {
+            "description": "Enter new description: ",
+        },
+        "description": "Change note description",
+    },
+    "find_note": {
+        "handler": find_note,
+        "args_required": {"title": name_validator},
+        "args_optional": {},
+        "step_prompts": {},
+        "description": "Find note by title",
+    },
+    "remove_note": {
+        "handler": remove_note,
+        "args_required": {"title": name_validator},
+        "args_optional": {},
+        "step_prompts": {},
+        "description": "Remove note by title",
+    },
+    "all_notes": {
+        "handler": show_all_notes,
+        "args_required": {},
+        "args_optional": {},
+        "step_prompts": {},
+        "description": "Display all notes",
     },
 }
