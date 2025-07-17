@@ -66,3 +66,8 @@ def address_validator(value):
     if len(address) < 4 :
         raise ValueError("The address can't be that short.")
     return address
+
+def days_validator(value):
+    if not value.isdigit():
+        raise ValueError("Value must be an integer.")
+    return int(value)

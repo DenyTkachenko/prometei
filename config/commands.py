@@ -5,7 +5,7 @@ from controllers.commands.phone import change_phone, show_phone
 from controllers.commands.record import add_contact, modify_contact
 from controllers.commands.show_all import show_all
 from controllers.commands.birthday import add_birthday
-from utils.validators import name_validator, phone_validator, birthday_validator, email_validator, address_validator
+from utils.validators import name_validator, phone_validator, birthday_validator, days_validator,email_validator, address_validator
 
 COMMANDS = {
     "exit": {
@@ -124,5 +124,14 @@ COMMANDS = {
             "name": "👤Enter the name of the contact: ",
         },
         "description": "Show user phone number",
+    },
+    "upcoming": {
+        "handler": show_birthdays,
+        "args_required": {},
+        "args_optional": {"days": days_validator},
+        "step_prompts": {
+            "days": "📅 Enter the number of days to check for upcoming birthdays (default is 7): ",
+        },
+        "description": "Show upcoming birthdays",
     },
 }
