@@ -1,6 +1,7 @@
 from collections import UserDict
 from utils.date import get_upcoming_birthdays
 from utils.custom_exceptions import BirthdayPeriodException
+from utils.helpers import record_to_dict
 from config.general import OUT_BIRTHDAY_FORMAT
 
 class AddressBook(UserDict):
@@ -16,9 +17,7 @@ class AddressBook(UserDict):
     return self.data.pop(normalized, None)
 
   def show_all(self):
-    if not self.data:
-      return "No records found"
-    return '\n'.join(str(record) for record in self.data.values())
+    return [record_to_dict(record) for record in self.data.values()]
 
   def get_upcoming_birthdays(self, days=7):
     if not isinstance(days, int):

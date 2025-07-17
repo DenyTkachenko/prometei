@@ -9,3 +9,8 @@ class BaseInterface(ABC):
     def receive_message(self):
         """Blocking call or event-driven, depends on implementation."""
         pass
+
+class BaseRenderer(ABC):
+    @abstractmethod
+    def render(self, data) -> str:
+        pass
