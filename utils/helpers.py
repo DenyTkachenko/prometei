@@ -10,7 +10,7 @@ def record_to_dict(record):
     return {
         field: (
             ", ".join(phone.value for phone in getattr(record, field, []))
-            if field == "phones"
+            if field == "phones" or field == "email"
             else getattr(getattr(record, field, None), "value", "-")
         )
         for field in fields
