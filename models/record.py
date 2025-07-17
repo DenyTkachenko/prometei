@@ -3,61 +3,95 @@ from models.phone import Phone
 from models.email import Email
 from models.address import Address
 from models.birthday import Birthday
+from utils.custom_exceptions import PhoneValueException, EmailValueException
 
 class Record:
-  def __init__(self, name):
-    self.name = Name(name)
-    self.phones = []
-    self.emails = []
-    self.birthday = None
-    self.address = None
+    def __init__(self, name: str):
+        self.name = Name(name)
+        self.phones: list[Phone] = []
+        self.emails: list[Email] = []
+        self.birthday: Birthday | None = None
+        self.address: Address | None = None
 
-  def add_phone(self, phone):
-    if any(ph.value == phone for ph in self.phones):
-      return True
-    phone_obj = Phone(phone)
-    self.phones.append(phone_obj)
+    def set_name(self, new_name: str) -> None:
+        self.name = Name(new_name)
 
-  def add_email(self, email):
-    if any(em.value == email for em in self.emails):
-      return True
-    email_obj = Email(email)
-    self.emails.append(email_obj)
-
-  def remove_phone(self, phone):
-    for ph in self.phones:
-      if ph.value == phone:
-        self.phones.remove(ph)
+    # Phone methods
+    def add_phone(self, phone: str) -> bool:
+        if any(p.value == phone for p in self.phones):
+            return False
+        self.phones.append(Phone(phone))
         return True
-    return False
 
-  def edit_phone(self, old_phone, new_phone):
-    for idx, ph in enumerate(self.phones):
-      if ph.value == old_phone:
-        if any(p.value == new_phone for p in self.phones):
-          self.phones.pop(idx)
-        else:
-          self.phones[idx] = Phone(new_phone)
+    def remove_phone(self, phone: str) -> bool:
+        for p in self.phones:
+            if p.value == phone:
+                self.phones.remove(p)
+                return True
+        return False
+
+    def edit_phone(self, old_phone: str, new_phone: str) -> None:
+        for idx, p in enumerate(self.phones):
+            if p.value == old_phone:
+                if any(p2.value == new_phone for p2 in self.phones):
+                    raise PhoneValueException(f"⚠️ New phone '{new_phone}' already exists.")
+                self.phones[idx] = Phone(new_phone)
+                return
+        raise PhoneValueException(f"⚠️ Old phone '{old_phone}' not found.")
+
+    # Email methods
+    def add_email(self, email: str) -> bool:
+        if any(e.value == email for e in self.emails):
+            return False
+        self.emails.append(Email(email))
         return True
-    return False
 
-  def find_phone(self, phone):
-    for ph in self.phones:
-      if ph.value == phone:
-        return ph
-    return None
+    def remove_email(self, email: str) -> bool:
+        for e in self.emails:
+            if e.value == email:
+                self.emails.remove(e)
+                return True
+        return False
 
-  def add_birthday(self, birthday):
-    if self.birthday is not None:
-      raise ValueError("Birthday already exists for this contact")
-    self.birthday = Birthday(birthday)
+    def edit_email(self, old_email: str, new_email: str) -> None:
+        for idx, e in enumerate(self.emails):
+            if e.value == old_email:
+                if any(e2.value == new_email for e2 in self.emails):
+                    raise EmailValueException(f"⚠️ New email '{new_email}' already exists.")
+                self.emails[idx] = Email(new_email)
+                return
+        raise EmailValueException(f"⚠️ Old email '{old_email}' not found.")
 
-  def set_address(self, address):
-    self.address = Address(address)
+    # Birthday methods
+    def set_birthday(self, birthday: str) -> None:
+        birthday = Birthday(birthday)
+        self.birthday = birthday
 
-  def __str__(self):
-    phones_str = '; '.join(p.value for p in self.phones)
-    birthday_str = f", Birthday: {self.birthday.value}" if self.birthday else ""
-    email_str = f", Emails: {'; '.join(p.value for p in self.emails)}" if len(self.emails) else ""
-    address_str = f", Address: {self.address.value}" if self.address else ""
-    return f"{self.name.value}: {phones_str if phones_str else 'No phone numbers found'}{birthday_str}{email_str}{address_str}"
+    def remove_birthday(self) -> bool:
+        if self.birthday:
+            self.birthday = None
+            return True
+        return False
+
+    def set_address(self, address: str) -> None:
+        self.address = Address(address)
+
+    def remove_address(self) -> bool:
+        if self.address:
+            self.address = None
+            return True
+        return False
+
+    def __str__(self) -> str:
+        parts = [f"{self.name.value}"]
+        if self.phones:
+            phones_str = '; '.join(p.value for p in self.phones)
+            parts.append(f"Phones: {phones_str}")
+        if self.emails:
+            emails_str = '; '.join(e.value for e in self.emails)
+            parts.append(f"Emails: {emails_str}")
+        if self.birthday:
+            parts.append(f"Birthday: {self.birthday.value}")
+        if self.address:
+            parts.append(f"Address: {self.address.value}")
+        return ' | '.join(parts)
