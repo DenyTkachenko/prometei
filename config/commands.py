@@ -185,8 +185,8 @@ COMMANDS = {
     },
     "find_user": {
         "handler": find_user,
-        "args_required": {},
-        "args_optional": {"query": str},
+        "args_required": {"query": str},
+        "args_optional": {},
         "step_prompts": {
             "query": " 🔍Enter search query (name, phone, emails, address, birthday): "
         },

@@ -3,6 +3,7 @@ from utils.date import get_upcoming_birthdays
 from utils.custom_exceptions import BirthdayPeriodException
 from config.general import OUT_BIRTHDAY_FORMAT
 from utils.helpers import notes_to_dict, record_to_dict
+from utils.search import search
 
 class AddressBook(UserDict):
   def __init__(self):
@@ -35,6 +36,14 @@ class AddressBook(UserDict):
     if not isinstance(days, int):
       raise BirthdayPeriodException()
     return get_upcoming_birthdays(records = self.contacts.values(), days = days, out_birthday_format = OUT_BIRTHDAY_FORMAT)
+  
+  def search(self, query):
+    query_lower = query.lower()
+    return [
+        record_to_dict(record)
+        for record in self.contacts.values()
+        if query_lower in search(record)
+      ]
   
 
   # ********** Notes **********
