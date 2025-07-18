@@ -5,7 +5,7 @@ OUT_BIRTHDAY_FORMAT = '%d.%m.%Y'
 table_headers_map = {
     "name": "👤 Name",
     "phones": "📞 Phones",
-    "email": "📩 Email",
+    "emails": "📩 Emails",
     "birthday": "🎂 Birthday",
     "address": "📍 Address",
     "congratulation_date": "🎉 Congratulation Date",
