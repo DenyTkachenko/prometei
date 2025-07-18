@@ -21,3 +21,7 @@ class UserNotExistException(Exception):
         if user_name:
             message = f'❌ Contact with name: {user_name} does not exist'
         super().__init__(message)
+
+class PrometeiIDValueException(Exception):
+    def __init__(self, message="This id value is incorrect"):
+        super().__init__(message)
