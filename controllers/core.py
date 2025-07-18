@@ -49,9 +49,32 @@ class CommandProcessor:
         self.context  = context
         self.sessions: Dict[Any, CommandSession] = {}
 
+    def cleanup_session(self, user_id: Any) -> None:
+        """Removes the session for given user, if it exists."""
+        if user_id in self.sessions:
+            del self.sessions[user_id]
+
     def process_message(self, user_id: Any, message: str) -> ProcessorResult:
         session = self.sessions.setdefault(user_id, CommandSession())
         text = message.strip()
+
+        # --- Handle 'back' to go one step up in multi-step flow ---
+        if session.command and text.lower() == "back":
+            provided = [a for a in session.arg_order if a in session.args]
+            if not provided:
+                # no steps done: exit multi-step flow
+                self.cleanup_session(user_id)
+                return ProcessorResult(expect_input=False)
+            last = provided[-1]
+            session.args.pop(last)
+            prompt = session.prompts.get(last, f"Enter {last}: ")
+            return ProcessorResult(f"⬅️ Going back.\n{prompt}", expect_input=True)
+
+        # --- Handle 'start' to go into main screen ---
+        if session.command and text.lower() == "start":
+            self.cleanup_session(user_id)
+            return ProcessorResult(expect_input=False)
+
 
         # --- Multi‑step argument collection ---
         if session.command:
@@ -92,7 +115,7 @@ class CommandProcessor:
                                storage=self.context.storage)
 
             # cleanup session
-            del self.sessions[user_id]
+            self.cleanup_session(user_id)
             return ProcessorResult(result, expect_input=False)
 
         # Empty enter
