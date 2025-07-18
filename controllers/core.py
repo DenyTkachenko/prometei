@@ -1,165 +1,216 @@
-from typing      import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass
+import threading
 
-from config.commands   import COMMANDS
-from utils.helpers     import parse_input
-from utils.validators  import validate_args, get_validators
+from config.commands import COMMANDS
+from utils.helpers import parse_input
+from utils.validators import validate_args, get_validators
 
 
 @dataclass
 class ProcessorResult:
     """
-    text: what to send or prompt the user
-    expect_input: if True, interface should immediately call receive_message(text)
+    Represents the result of processing a user message.
+
+    Attributes:
+        text: The response text or prompt for the next input.
+        expect_input: If True, next input is taken without redisplaying the main prompt.
     """
     text: Optional[str] = None
     expect_input: bool = False
 
 
 class CommandSession:
-    """Tracks one user’s in‑progress multi‑step command."""
+    """
+    Stores the state of a multi-step command for a single user.
+    """
     def __init__(self):
-        # name of the current command
-        self.command:    Optional[str] = None
-        # ordered list of argument names
-        self.arg_order:  List[str]     = []
-        # per-argument validator functions
-        self.validators: Dict[str,Any] = {}
-        # per-argument step prompts
-        self.prompts:    Dict[str,str] = {}
-        # collected argument values
-        self.args:       Dict[str,Any] = {}
+        # Active command name
+        self.command: Optional[str] = None
+        # List of all expected arguments (required + optional)
+        self.arg_order: List[str] = []
+        # Validator functions for each argument
+        self.validators: Dict[str, Any] = {}
+        # Step-by-step prompts for each argument
+        self.prompts: Dict[str, str] = {}
+        # Collected argument values
+        self.args: Dict[str, Any] = {}
+        # Name of the next field selected via "--field"
+        self.next_field: Optional[str] = None
 
 
 class CommandContext:
-    """Global state shared by all handlers."""
-    def __init__(self, storage, address_book):
-        self.storage      = storage
+    """
+    Shared context: storage, address book, running flag.
+    """
+    def __init__(self, storage: Any, address_book: Any):
+        self.storage = storage
         self.address_book = address_book
-        # flag to stop the main loop when exit
-        self.running      = True
+        # Set to False to stop loops and shutdown
+        self.running: bool = True
 
 
 class CommandProcessor:
     """
-    Core processor, fully decoupled from any frontend.
-    Sessions keyed by user_id for per‑user multi‑step flows.
+    Processes text messages into commands with multi-step flows.
+
+    Sessions are stored per user_id and protected by a reentrant lock.
     """
+
     def __init__(self, context: CommandContext):
-        self.context  = context
+        self.context = context
         self.sessions: Dict[Any, CommandSession] = {}
+        self.lock = threading.RLock()
 
     def cleanup_session(self, user_id: Any) -> None:
-        """Removes the session for given user, if it exists."""
-        if user_id in self.sessions:
-            del self.sessions[user_id]
+        """Remove the user's session, if it exists."""
+        with self.lock:
+            self.sessions.pop(user_id, None)
+
+    def _optional_args(self, cmd_name: str) -> List[str]:
+        """Return a list of optional argument names for the command."""
+        return list(COMMANDS[cmd_name]["args_optional"].keys())
 
     def process_message(self, user_id: Any, message: str) -> ProcessorResult:
-        session = self.sessions.setdefault(user_id, CommandSession())
+        """
+        Main entry: process incoming text, return a ProcessorResult.
+        Always returns a ProcessorResult; never returns None.
+        """
         text = message.strip()
 
-        # --- Handle 'back' to go one step up in multi-step flow ---
+        with self.lock:
+            session = self.sessions.get(user_id)
+            if session is None:
+                session = CommandSession()
+                self.sessions[user_id] = session
+
+        # If no command active and no text, do nothing
+        if session.command is None and not text:
+            return ProcessorResult(text="", expect_input=False)
+
+        # Handle 'back' in multi-step flow
         if session.command and text.lower() == "back":
             provided = [a for a in session.arg_order if a in session.args]
             if not provided:
-                # no steps done: exit multi-step flow
                 self.cleanup_session(user_id)
-                return ProcessorResult(expect_input=False)
+                return ProcessorResult(text=None, expect_input=False)
             last = provided[-1]
-            session.args.pop(last)
+            session.args.pop(last, None)
+            session.next_field = None
             prompt = session.prompts.get(last, f"Enter {last}: ")
-            return ProcessorResult(f"⬅️ Going back.\n{prompt}", expect_input=True)
+            return ProcessorResult(text=f"⬅️ Going back.\n{prompt}", expect_input=True)
 
-        # --- Handle 'start' to go into main screen ---
+        # Handle 'start' to cancel flow
         if session.command and text.lower() == "start":
             self.cleanup_session(user_id)
-            return ProcessorResult(expect_input=False)
+            return ProcessorResult(text=None, expect_input=False)
 
+        if session.command and text.lower() == "finish":
+            cmd_conf = COMMANDS[session.command]
+            required = set(cmd_conf["args_required"].keys())
+            # If all required fields are filled, run the handler
+            if required.issubset(session.args.keys()):
+                handler = cmd_conf["handler"]
+                values = [session.args.get(arg) for arg in session.arg_order]
+                print('call handler')
+                result_text = handler(values,
+                                      self.context.address_book,
+                                      storage=self.context.storage)
+                self.cleanup_session(user_id)
+                return ProcessorResult(text=result_text, expect_input=False)
+            # Otherwise, prompt for the next missing required field
+            missing = [arg for arg in cmd_conf["args_required"].keys()
+                       if arg not in session.args]
+            print('missing missing argu')
+            next_arg = missing[0]
+            prompt = session.prompts.get(next_arg, f"Enter {next_arg}: ")
+            return ProcessorResult(
+                text=f"❌ Required fields missing. {prompt}",
+                expect_input=True
+            )
 
-        # --- Multi‑step argument collection ---
+        # Quick switch to an optional field: --field
+        if session.command and text.startswith("--"):
+            field = text[2:]
+            if field in self._optional_args(session.command) and field not in session.args:
+                session.next_field = field
+                prompt = session.prompts.get(field, f"Enter {field}: ")
+                return ProcessorResult(text=prompt, expect_input=True)
+            return ProcessorResult(text=f"❌ Unknown argument '{field}'.", expect_input=True)
+
+        # Multi-step argument collection
         if session.command:
-            # 1) find next argument name to collect
-            for name in session.arg_order:
-                if name not in session.args:
-                    current = name
-                    break
+            # Determine which field to fill next
+            if session.next_field:
+                current = session.next_field
+                session.next_field = None
+            else:
+                # First missing in order
+                current = next(arg for arg in session.arg_order if arg not in session.args)
 
-            # 2) if optional & blank → assign None
+            # Allow blank for optional
             if text == "" and current in self._optional_args(session.command):
                 session.args[current] = None
             else:
-                # 3) validate and store
                 validator = session.validators.get(current)
                 try:
                     session.args[current] = validator(text) if validator else text
-                except Exception as e:
-                    # on validation error, re‑prompt the same step
+                except Exception as err:
                     prompt = session.prompts.get(current, f"Enter {current}: ")
-                    return ProcessorResult(f"❌ Error '{current}': {e}\n{prompt}",
-                                           expect_input=True)
+                    return ProcessorResult(
+                        text=f"❌ Error in '{current}': {err}\n{prompt}",
+                        expect_input=True,
+                    )
 
-            # 4) check if more args remain
-            missing = [a for a in session.arg_order if a not in session.args]
-            if missing:
-                nxt = missing[0]
-                prompt = session.prompts.get(nxt, f"Enter {nxt}: ")
-                return ProcessorResult(prompt, expect_input=True)
+            # Check for remaining args
+            remaining = [a for a in session.arg_order if a not in session.args]
+            if remaining:
+                next_arg = remaining[0]
+                prompt = session.prompts.get(next_arg, f"Enter {next_arg}: ")
+                return ProcessorResult(text=prompt, expect_input=True)
 
-            # 5) all collected → call handler
-            ordered_args = [session.args[a] for a in session.arg_order]
+            # All args collected: execute handler
             cmd_conf = COMMANDS[session.command]
-            handler  = cmd_conf["handler"]
-            # pass storage as keyword only
-            result   = handler(ordered_args,
-                               self.context.address_book,
-                               storage=self.context.storage)
-
-            # cleanup session
+            handler = cmd_conf["handler"]
+            values = [session.args[arg] for arg in session.arg_order]
+            result_text = handler(values, self.context.address_book, storage=self.context.storage)
             self.cleanup_session(user_id)
-            return ProcessorResult(result, expect_input=False)
+            return ProcessorResult(text=result_text, expect_input=False)
 
-        # Empty enter
-        if not text:
-            return ProcessorResult("",expect_input=False)
-
-        # parse command name and any inline args
+        # No active session: parse new command
+        # parse_input returns (command_name, raw_args list)
         name, raw_args = parse_input(text)
         cmd_conf = COMMANDS.get(name)
         if not cmd_conf:
-            return ProcessorResult(f"❌ Unknown command '{name}'.", expect_input=False)
+            return ProcessorResult(text=f"❌ Unknown command '{name}'.", expect_input=False)
 
-        # prepare lists of arg names and validators
-        required   = list(cmd_conf["args_required"].keys())
-        optional   = list(cmd_conf["args_optional"].keys())
-        order      = required + optional
+        # Prepare args
+        required = list(cmd_conf["args_required"].keys())
+        optional = list(cmd_conf["args_optional"].keys())
+        order = required + optional
         validators = get_validators(cmd_conf)
 
-        # bulk‑validate any inline args
+        # Validate inline args
         validated = validate_args(raw_args, order, validators)
         if validated is None:
-            # validation error already printed; restart command entry
-            return ProcessorResult(expect_input=False)
+            return ProcessorResult(text=None, expect_input=False)
 
-        # if user provided all args at once → call handler immediately
+        # If all args present, call handler immediately
         if len(validated) == len(order):
-            ordered_args = [validated[a] for a in order]
-            result = cmd_conf["handler"](ordered_args,
-                                         self.context.address_book,
-                                         storage=self.context.storage)
-            return ProcessorResult(result, expect_input=False)
+            values = [validated[arg] for arg in order]
+            result_text = cmd_conf["handler"](values, self.context.address_book, storage=self.context.storage)
+            return ProcessorResult(text=result_text, expect_input=False)
 
-        # else → enter multi‑step mode
-        session.command    = name
-        session.arg_order  = order
+        # Enter multi-step flow
+        session.command = name
+        session.arg_order = order
         session.validators = validators
-        session.prompts    = cmd_conf.get("step_prompts", {})
-        session.args       = validated
+        session.prompts = cmd_conf.get("step_prompts", {})
+        session.args = validated
+        session.next_field = None
 
-        # ask for the first missing argument
-        next_arg = order[len(validated)]
-        prompt   = session.prompts.get(next_arg, f"Enter {next_arg}: ")
-        return ProcessorResult(prompt, expect_input=True)
-
-    def _optional_args(self, command_name: str) -> List[str]:
-        """Return the list of optional arg names for a command."""
-        return list(COMMANDS[command_name]["args_optional"].keys())
+        # Prompt first missing argument
+        missing = [a for a in order if a not in validated]
+        first = missing[0]
+        prompt = session.prompts.get(first, f"Enter {first}: ")
+        return ProcessorResult(text=prompt, expect_input=True)
