@@ -1,7 +1,8 @@
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
 import threading
 
+from config.general import StreamControlCmd
 from config.commands import COMMANDS
 from utils.helpers import parse_input
 from utils.validators import validate_args, get_validators
@@ -89,7 +90,7 @@ class CommandProcessor:
             return ProcessorResult(text="", expect_input=False)
 
         # Handle 'back' in multi-step flow
-        if session.command and text.lower() == "back":
+        if session.command and text.lower() == StreamControlCmd.BACK.value.lower():
             provided = [a for a in session.arg_order if a in session.args]
             if not provided:
                 self.cleanup_session(user_id)
@@ -105,14 +106,14 @@ class CommandProcessor:
             self.cleanup_session(user_id)
             return ProcessorResult(text=None, expect_input=False)
 
-        if session.command and text.lower() == "finish":
+        # Handle 'finish' to finish flow
+        if session.command and text.lower() == StreamControlCmd.FINISH.value.lower():
             cmd_conf = COMMANDS[session.command]
             required = set(cmd_conf["args_required"].keys())
             # If all required fields are filled, run the handler
             if required.issubset(session.args.keys()):
                 handler = cmd_conf["handler"]
                 values = [session.args.get(arg) for arg in session.arg_order]
-                print('call handler')
                 result_text = handler(values,
                                       self.context.address_book,
                                       storage=self.context.storage)
@@ -121,7 +122,6 @@ class CommandProcessor:
             # Otherwise, prompt for the next missing required field
             missing = [arg for arg in cmd_conf["args_required"].keys()
                        if arg not in session.args]
-            print('missing missing argu')
             next_arg = missing[0]
             prompt = session.prompts.get(next_arg, f"Enter {next_arg}: ")
             return ProcessorResult(
