@@ -67,3 +67,6 @@ class AddressBook(UserDict):
 
   def show_all_notes(self):
     return [notes_to_dict(record) for record in self.notes.values()]
+  
+  def find_notes_by_tag(self, tag):
+    return [notes_to_dict(record) for record in self.notes.values() if record.is_tag_in_note(tag)]

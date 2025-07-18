@@ -2,6 +2,7 @@ from controllers.commands.address import add_address, remove_address
 from controllers.commands.address_book.show_all import show_all
 from controllers.commands.exit import exit_handler
 from controllers.commands.email import change_email, remove_email
+from controllers.commands.notes.find_notes_by_tag import find_notes_by_tag
 from controllers.commands.phone import change_phone, show_phone
 from controllers.commands.record import add_contact, modify_contact
 from controllers.commands.birthday import add_birthday, show_birthdays
@@ -191,5 +192,14 @@ COMMANDS = {
             "query": " 🔍Enter search query (name, phone, emails, address, birthday): "
         },
         "description": "Find user by query",
+    },
+    "find_notes_by_tag": {
+        "handler": find_notes_by_tag,
+        "args_required": {"tag": str},
+        "args_optional": {},
+        "step_prompts": {
+            "tag": "Enter tag: "
+        },
+        "description": "Find notes by tag",
     }
 }
