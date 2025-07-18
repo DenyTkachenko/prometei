@@ -8,20 +8,6 @@ from controllers.commands.birthday import add_birthday, show_birthdays
 from utils.validators import name_validator, phone_validator, birthday_validator, days_validator,email_validator, address_validator
 
 COMMANDS = {
-    "exit": {
-        "handler": exit_handler,
-        "args_required": {},
-        "args_optional": {},
-        "step_prompts": {},
-        "description": "Exit and save",
-    },
-    "close": {
-        "handler": exit_handler,
-        "args_required": {},
-        "args_optional": {},
-        "step_prompts": {},
-        "description": "Exit and save",
-    },
     "add": {
         "handler": add_contact,
         "args_required": {"name": name_validator, "phone": phone_validator},
@@ -33,7 +19,7 @@ COMMANDS = {
             "email": "📧Enter contact email (optional): ",
             "address": "📫Enter contact address (optional): ",
         },
-        "description": "Add a new contact",
+        "description": "🪪 Add a new contact",
     },
     "modify-contact": {
         "handler": modify_contact,
@@ -133,5 +119,19 @@ COMMANDS = {
             "days": "📅 Enter the number of days to check for upcoming birthdays (default is 7): ",
         },
         "description": "Show upcoming birthdays",
+    },
+    "exit": {
+        "handler": exit_handler,
+        "args_required": {},
+        "args_optional": {},
+        "step_prompts": {},
+        "description": "Exit and save",
+    },
+    "close": {
+        "handler": exit_handler,
+        "args_required": {},
+        "args_optional": {},
+        "step_prompts": {},
+        "description": "Exit and save",
     },
 }

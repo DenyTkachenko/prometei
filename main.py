@@ -1,50 +1,62 @@
-# main.py
-
-from storage.pickle_storage import PickleStorage
+from views.telegram_interface import TelegramBot
+from storage.pickle_storage   import PickleStorage
 from models.address_book      import AddressBook
-from views.cli_interface      import CLIInterface
 from controllers.core         import CommandContext, CommandProcessor, ProcessorResult
+from views.cli_interface      import CLIInterface, BaseInterface
 
 
 def create_context() -> CommandContext:
-    """
-    Initialize storage and load the address book.
-    Returns a CommandContext holding shared state.
-    """
     storage      = PickleStorage("addressbook.pkl", factory=AddressBook, backup=True)
     address_book = storage.load()
     return CommandContext(storage=storage, address_book=address_book)
 
 
-def main() -> None:
-    """
-    Entry point for the CLI.
-    Runs a loop, prompting for commands or arguments, and dispatching them to the processor.
-    """
+def run_loop(interface: BaseInterface, initial_prompt: str) -> None:
     context   = create_context()
-    interface = CLIInterface()
     processor = CommandProcessor(context)
 
-    # First prompt: ask for a command
-    result = ProcessorResult("📥 Enter a command (type 'help'): ", expect_input=True)
+    # Start with the initial prompt
+    prompt = initial_prompt
 
-    # Main loop: continue until a handler sets context.running = False
     while context.running:
-        if result.expect_input:
-            # If processor asked for input, use that as our prompt
-            user_text = interface.receive_message(user_id=0, prompt=result.text)
-        else:
-            # Otherwise, display the result and then re‑prompt for a new command
-            if result.text:
-                interface.send_message(user_id=0, text=result.text)
-            user_text = interface.receive_message(
-                user_id=0,
-                prompt="📥 Enter a command (type 'help'): "
-            )
+        # 1) Receive from interface (CLI display prompt, Telegram ignore)
+        user_id, text = interface.receive_message(prompt=prompt)
 
-        # Feed the user’s text back into the processor
-        result = processor.process_message(user_id=0, message=user_text)
+        # 2) Process
+        result = processor.process_message(user_id, text)
+
+        if result.expect_input:
+            # multi‑step mode
+            prompt = result.text or ""
+            continue
+
+        # one-step mode
+        if result.text:
+            interface.send_message(user_id, result.text)
+
+        prompt = initial_prompt
+
+
+def cli_main() -> None:
+    """Run the assistant in command‑line mode."""
+    default_prompt = "📥 Enter a command (type 'help'): "
+    run_loop(CLIInterface(), default_prompt)
+
+
+def telegram_main(token: str) -> None:
+
+    context   = create_context()
+    processor = CommandProcessor(context)
+    bot       = TelegramBot(token, processor)
+    bot.run_polling()
 
 
 if __name__ == "__main__":
-    main()
+    mode = "telegram"
+    if mode == "telegram":
+        token = '7994558666:AAHfkqLVemKNhkXp2A6GaGzVVibjoE98uhQ'
+        if not token:
+            raise RuntimeError("TELEGRAM_TOKEN is not set")
+        telegram_main(token)
+    else:
+        cli_main()
