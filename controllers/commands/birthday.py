@@ -1,5 +1,5 @@
 from utils.decorators import input_error
-from views.renderers import ContactTableRenderer
+from views.table import TableRenderer
 from utils.custom_exceptions import UserNotExistException
 
 @input_error('add-birthday', ['name', 'birthday'])
@@ -32,5 +32,5 @@ def remove_birthday(args, address_book, **kwargs):
 def show_birthdays(args, address_book, **kwargs):
     days = args[0] if args and args[0] is not None else 7
     records = address_book.get_upcoming_birthdays(days)
-    renderer = ContactTableRenderer()
+    renderer = TableRenderer()
     return renderer.render(records)

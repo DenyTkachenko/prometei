@@ -1,8 +1,9 @@
-from views.telegram_interface import TelegramBot
-from storage.pickle_storage   import PickleStorage
-from models.address_book      import AddressBook
-from controllers.core         import CommandContext, CommandProcessor, ProcessorResult
-from views.cli_interface      import CLIInterface, BaseInterface
+from storage.pickle_storage                import PickleStorage
+from models.address_book                   import AddressBook
+from controllers.core                      import CommandContext, CommandProcessor
+from views.cli_interface                   import CLIInterface, BaseInterface
+from controllers.telegram.telegram_wrapper import TelegramBot
+from config.general                        import MODE, TG_TOKEN
 
 
 def create_context() -> CommandContext:
@@ -52,11 +53,9 @@ def telegram_main(token: str) -> None:
 
 
 if __name__ == "__main__":
-    mode = "telegram"
-    if mode == "telegram":
-        token = '7994558666:AAHfkqLVemKNhkXp2A6GaGzVVibjoE98uhQ'
-        if not token:
-            raise RuntimeError("TELEGRAM_TOKEN is not set")
-        telegram_main(token)
+    if MODE == "telegram":
+        if not TG_TOKEN:
+            raise RuntimeError("TG_TOKEN is not set")
+        telegram_main(TG_TOKEN)
     else:
         cli_main()
