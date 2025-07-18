@@ -6,7 +6,6 @@ def parse_input(user_input):
     return cmd, args
 
 def record_to_dict(record):
-    print(record)
     fields = ["name", "phones", "emails", "birthday", "address"]
     return {
         field: (
