@@ -49,15 +49,17 @@ upcoming: Show upcoming birthdays
 
 # Notes
 
-add_note: Add a new note
+add-note: Add a new note
 
-change_note: Change an existing note
+change-note: Change an existing note
 
-find_note: Find a note by title
+find-note: Find a note by title
 
-remove_note: Delete a note
+remove-note: Delete a note
 
-all_notes: Show all notes
+all-notes: Show all notes
+
+find-notes-by-tag: Find notes by tag
 
 # Exit
 
