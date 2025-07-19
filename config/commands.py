@@ -144,7 +144,7 @@ COMMANDS = {
         "description": "Show upcoming birthdays",
     },
     # ********************
-    "add_note": {
+    "add-note": {
         "handler": add_note,
         "args_required": {"title": name_validator, "description": name_validator},
         "args_optional": {},
@@ -154,7 +154,7 @@ COMMANDS = {
         },
         "description": "Add a new note",
     },
-    "change_note":{
+    "change-note":{
         "handler": change_note,
         "args_required": {"title": name_validator, "description": name_validator},
         "args_optional": {},
@@ -163,28 +163,28 @@ COMMANDS = {
         },
         "description": "Change note description",
     },
-    "find_note": {
+    "find-note": {
         "handler": find_note,
         "args_required": {"title": name_validator},
         "args_optional": {},
         "step_prompts": {},
         "description": "Find note by title",
     },
-    "remove_note": {
+    "remove-note": {
         "handler": remove_note,
         "args_required": {"title": name_validator},
         "args_optional": {},
         "step_prompts": {},
         "description": "Remove note by title",
     },
-    "all_notes": {
+    "all-notes": {
         "handler": show_all_notes,
         "args_required": {},
         "args_optional": {},
         "step_prompts": {},
         "description": "Display all notes",
     },
-    "find_user": {
+    "find-user": {
         "handler": find_user,
         "args_required": {"query": str},
         "args_optional": {},
@@ -193,7 +193,7 @@ COMMANDS = {
         },
         "description": "Find user by query",
     },
-    "find_notes_by_tag": {
+    "find-notes-by-tag": {
         "handler": find_notes_by_tag,
         "args_required": {"tag": str},
         "args_optional": {},
