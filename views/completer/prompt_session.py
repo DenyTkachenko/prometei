@@ -13,8 +13,13 @@ return: PromptSession - об'єкт типу PromptSession
 """
 
 def get_prompt_session(commands: list[str]) -> PromptSession:
-    """return PromptSession(
-        completer=CommandCompleter(commands),
-        complete_while_typing=True
-    )"""
-    return None
+    prompt_session = None
+    try:
+        prompt_session = PromptSession(
+            completer=CommandCompleter(commands),
+            complete_while_typing=True
+        )
+    except Exception as ex:
+        print(str(ex))
+
+    return prompt_session
