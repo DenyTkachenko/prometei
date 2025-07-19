@@ -14,6 +14,7 @@ class AddressBook(UserDict):
     self.notes = {}
     self._managerID = ManagerPrometeiId()
 
+
   @property
   def manager(self):
       return self._managerID
@@ -35,14 +36,14 @@ class AddressBook(UserDict):
               return record
       return None
 
-  def find_record_by_id(self, promid: int):
+  def find_record_by_id(self, promid):
       return self.contacts.get(promid)
 
   def delete(self, name):
     normalized = name.strip().capitalize()
     return self.contacts.pop(normalized, None)
 
-  def delete_record_by_id(self, promid: int):
+  def delete_record_by_id(self, promid):
       return self.contacts.pop(promid, None)
 
   def show_all(self):
@@ -74,7 +75,7 @@ class AddressBook(UserDict):
             return note
     return None
 
-  def find_note_by_id(self, promid: int):
+  def find_note_by_id(self, promid):
       return self.notes.get(promid)
 
   def delete_note(self, title):
@@ -84,7 +85,7 @@ class AddressBook(UserDict):
               return self.notes.pop(note_id)
       return None
 
-  def delete_note_by_id(self, promid: int):
+  def delete_note_by_id(self, promid):
       return self.notes.pop(promid, None)
 
   def show_all_notes(self):

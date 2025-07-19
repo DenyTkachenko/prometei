@@ -5,20 +5,20 @@ from utils.custom_exceptions import PrometeiIDValueException
 
 class PrometeiId(Field):
 
-    def __init__(self, promid: int):
-        if not isinstance(promid, int):
+    def __init__(self, promid: str):
+        if not isinstance(promid, str):
             raise PrometeiIDValueException()
         self.promid = promid
         self.promguuid = str(uuid.uuid4())
         super().__init__((self.promid, self.promguuid))
 
     @property
-    def promid(self) -> int:
+    def promid(self) -> str:
         return self.__promid
 
     @promid.setter
-    def promid(self, promid: int):
-        if not isinstance(promid, int):
+    def promid(self, promid: str):
+        if not isinstance(promid, str):
             raise PrometeiIDValueException()
         self.__promid = promid
 

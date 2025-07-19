@@ -37,18 +37,21 @@ def add_contact(args, address_book: AddressBook, **kwargs):
 
 @input_error("remove_contact", ["promid"])
 def remove_contact(args, address_book: AddressBook, **kwargs):
-    promid = args[0]
-    record = address_book.find_record_by_id(promid)
-    address_book.manager.delete_item("contacts")
+    promid = str(args[0])
+    record = address_book.find_record_by_id(str(promid))
+    if not record:
+        return UserNotExistException(user_id=str(promid))
+    address_book.delete_record_by_id(str(promid))
+    address_book.manager.delete_item("contacts", str(promid))
     return f"Note with title: {record.name.value} and id {promid} deleted"
 
 
 @input_error('add', ['promid'], ['name','phone', 'birthday', 'email', 'address'])
 def modify_contact(args, address_book: AddressBook, **kwargs):
     promid, name, phone, birthday, email, address, *_ = args
-    record = address_book.find_record_by_id(promid)
+    record = address_book.find_record_by_id(str(promid))
     if not record:
-        return UserNotExistException(user_name = record.name.value)
+        return UserNotExistException(user_id = str(promid))
 
     # Collect changes for message
     changes = []

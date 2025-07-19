@@ -6,9 +6,9 @@ from utils.custom_exceptions import UserNotExistException
 @input_error('add-birthday', ['promid', 'birthday'])
 def add_birthday(args, address_book: AddressBook, **kwargs):
     promid, birthday, *_ = args
-    record = address_book.find_record_by_id(promid)
+    record = address_book.find_record_by_id(str(promid))
     if not record:
-        return UserNotExistException(user_name = record.name.value)
+        return UserNotExistException(user_id = str(promid))
     try:
         record.set_birthday(birthday)
         return f"✅ 🎂Birthday added for {record.name.value}."
@@ -18,9 +18,9 @@ def add_birthday(args, address_book: AddressBook, **kwargs):
 @input_error('remove-birthday', ['promid'])
 def remove_birthday(args, address_book: AddressBook, **kwargs):
     promid = args[0]
-    record = address_book.find_record_by_id(promid)
+    record = address_book.find_record_by_id(str(promid))
     if not record:
-        return UserNotExistException(user_name = record.name.value)
+        return UserNotExistException(user_id = str(promid))
     try:
         if record.remove_birthday():
             return f"✅ 🎂 Birthday removed for '{record.name.value}'."

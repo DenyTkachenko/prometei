@@ -17,9 +17,9 @@ class BirthdayFormatException(Exception):
         super().__init__(message)
 
 class UserNotExistException(Exception):
-    def __init__(self, message='❌ Contact does not exist', user_name = ""):
-        if user_name:
-            message = f'❌ Contact with name: {user_name} does not exist'
+    def __init__(self, message='❌ Contact does not exist', user_id = ""):
+        if user_id:
+            message = f'❌ Contact with id: {user_id} does not exist'
         super().__init__(message)
 
 class PrometeiIDValueException(Exception):
