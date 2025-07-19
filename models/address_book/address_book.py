@@ -1,4 +1,6 @@
 from collections import UserDict
+
+from models.manager.manager_prometei_id import ManagerPrometeiId
 from utils.date import get_upcoming_birthdays
 from utils.custom_exceptions import BirthdayPeriodException
 from config.general import OUT_BIRTHDAY_FORMAT
@@ -10,6 +12,11 @@ class AddressBook(UserDict):
     super().__init__()
     self.contacts = {}
     self.notes = {}
+    self._managerID = ManagerPrometeiId()
+
+  @property
+  def manager(self):
+      return self._managerID
   
   def __setstate__(self, state):
     self.__dict__ = state
@@ -19,15 +26,21 @@ class AddressBook(UserDict):
         self.notes = {}
 
   def add_record(self, record):
-    self.contacts[record.name.value] = record
+    self.contacts[record.promid.value[0]] = record
 
   def find(self, name):
     normalized = name.strip().capitalize()
     return self.contacts.get(normalized)
 
+  def find_record_by_id(self, promid: int):
+      return self.contacts.get(promid)
+
   def delete(self, name):
     normalized = name.strip().capitalize()
     return self.contacts.pop(normalized, None)
+
+  def delete_record_by_id(self, promid: int):
+      return self.contacts.pop(promid, None)
 
   def show_all(self):
     return [record_to_dict(record) for record in self.contacts.values()]
@@ -49,7 +62,7 @@ class AddressBook(UserDict):
   # ********** Notes **********
 
   def add_note(self, note):
-    self.notes[note.id] = note
+    self.notes[note.promid.value[0]] = note
 
   def find_note(self, title):
     normalized = title.strip().lower()
@@ -58,12 +71,18 @@ class AddressBook(UserDict):
             return note
     return None
 
+  def find_note_by_id(self, promid: int):
+      return self.notes.get(promid)
+
   def delete_note(self, title):
       normalized = title.strip().lower()
       for note_id, note in self.notes.items():
           if note.title.value.strip().lower() == normalized:
               return self.notes.pop(note_id)
-      return None 
+      return None
+
+  def delete_note_by_id(self, promid: int):
+      return self.notes.pop(promid, None)
 
   def show_all_notes(self):
     return [notes_to_dict(record) for record in self.notes.values()]

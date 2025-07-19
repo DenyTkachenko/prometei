@@ -18,7 +18,7 @@ class Record:
         self._promid = promid
 
     @property
-    def get_promid(self):
+    def promid(self):
         return self._promid
 
     def set_name(self, new_name: str) -> None:
