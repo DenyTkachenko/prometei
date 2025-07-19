@@ -1,15 +1,17 @@
+from models.address_book.address_book import AddressBook
 from models.address_book.record import Record
 from utils.decorators import input_error
 from utils.custom_exceptions import UserNotExistException
 
 @input_error('add', ['name'], ['phone', 'birthday', 'email', 'address'])
-def add_contact(args, address_book, **kwargs):
+def add_contact(args, address_book: AddressBook, **kwargs):
     name, phone, birthday, email, address, *_ = args
 
     if address_book.find(name):
         return f"⚠️ Contact '{name}' already exists."
 
-    record = Record(name)
+    promid = address_book.manager.get_new_id("contacts")
+    record = Record(name, promid)
     address_book.add_record(record)
 
     # Collect parts for message
@@ -33,12 +35,12 @@ def add_contact(args, address_book, **kwargs):
         return f"✅ Contact '{name}' added with {details}."
     return f"✅ Contact '{name}' added with no additional details."
 
-@input_error('add', ['name'], ['phone', 'birthday', 'email', 'address'])
-def modify_contact(args, address_book, **kwargs):
-    name, phone, birthday, email, address, *_ = args
-    record = address_book.find(name)
+@input_error('add', ['promid'], ['name','phone', 'birthday', 'email', 'address'])
+def modify_contact(args, address_book: AddressBook, **kwargs):
+    promid, name, phone, birthday, email, address, *_ = args
+    record = address_book.find_record_by_id(promid)
     if not record:
-        return UserNotExistException(user_name = name)
+        return UserNotExistException(user_name = record.name.value)
 
     # Collect changes for message
     changes = []
@@ -56,7 +58,7 @@ def modify_contact(args, address_book, **kwargs):
         changes.append(f"📫 address: {address}")
 
     if not changes:
-        return f"ℹ️ No updates provided for '{name}'."
+        return f"ℹ️ No updates provided for '{record.name.value}'."
 
     # Build summary for changes
     if len(changes) > 1:
@@ -64,4 +66,4 @@ def modify_contact(args, address_book, **kwargs):
     else:
         changes_str = changes[0]
 
-    return f"✅ Contact '{name}' updated with {changes_str}."
+    return f"✅ Contact '{record.name.value}' updated with {changes_str}."

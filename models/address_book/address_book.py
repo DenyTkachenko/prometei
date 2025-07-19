@@ -29,8 +29,11 @@ class AddressBook(UserDict):
     self.contacts[record.promid.value[0]] = record
 
   def find(self, name):
-    normalized = name.strip().capitalize()
-    return self.contacts.get(normalized)
+      normalized = name.strip().lower()
+      for record in self.contacts.values():
+          if record.name.value.strip().lower() == normalized:
+              return record
+      return None
 
   def find_record_by_id(self, promid: int):
       return self.contacts.get(promid)

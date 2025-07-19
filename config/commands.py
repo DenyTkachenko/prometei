@@ -49,7 +49,7 @@ COMMANDS = {
         "args_required": {"promid": prometei_id_validator},
         "args_optional": {"name": name_validator,"phone": phone_validator, "birthday": birthday_validator, "email": email_validator, "address": address_validator},
         "step_prompts": {
-            "id": "Enter the id of the contact : ",
+            "promid": "Enter the id of the contact : ",
             "name": "👤Enter the name of the contact (optional): ",
             "phone": "📞Enter additional phone number (optional): ",
             "birthday": "🎂Enter the birthday (optional): ",
@@ -67,10 +67,10 @@ COMMANDS = {
     },
     "change-phone":{
         "handler": change_phone,
-        "args_required": {"id": prometei_id_validator, "old_phone": phone_validator, "new_phone": phone_validator},
+        "args_required": {"promid": prometei_id_validator, "old_phone": phone_validator, "new_phone": phone_validator},
         "args_optional": {},
         "step_prompts": {
-            "id": "👤Enter the id of the contact: ",
+            "promid": "👤Enter the id of the contact: ",
             "old_phone": "📞Enter the old phone number: ",
             "new_phone": "📞Enter the new phone number: ",
         },
@@ -78,10 +78,10 @@ COMMANDS = {
     },
     "change-email": {
         "handler": change_email,
-        "args_required": {"id": prometei_id_validator, "old_email": email_validator, "new_email": email_validator},
+        "args_required": {"promid": prometei_id_validator, "old_email": email_validator, "new_email": email_validator},
         "args_optional": {},
         "step_prompts": {
-            "id": "👤Enter the id of the contact: ",
+            "promidid": "👤Enter the id of the contact: ",
             "old_phone": "📧Enter the old email: ",
             "new_phone": "📧Enter the new email: ",
         },
@@ -89,49 +89,49 @@ COMMANDS = {
     },
     "remove-email": {
         "handler": remove_email,
-        "args_required": {"id": prometei_id_validator, "old_email": email_validator},
+        "args_required": {"promid": prometei_id_validator, "old_email": email_validator},
         "args_optional": {},
         "step_prompts": {
-            "id": "👤Enter the id of the contact: ",
+            "promid": "👤Enter the id of the contact: ",
             "old_email": "📧Enter the contact email: ",
         },
         "description": "Remove contact email",
     },
     "add-address": {
         "handler": add_address,
-        "args_required": {"id": prometei_id_validator, "address": address_validator},
+        "args_required": {"promid": prometei_id_validator, "address": address_validator},
         "args_optional": {},
         "step_prompts": {
-            "id": "👤Enter the id of the contact: ",
+            "promid": "👤Enter the id of the contact: ",
             "address": "📫Enter contact address: ",
         },
         "description": "Add contact address",
     },
     "remove-address": {
         "handler": remove_address,
-        "args_required": {"id": prometei_id_validator},
+        "args_required": {"promid": prometei_id_validator},
         "args_optional": {},
         "step_prompts": {
-            "id": "👤Enter the id of the contact: ",
+            "promid": "👤Enter the id of the contact: ",
         },
         "description": "Remove contact address",
     },
     "add-birthday": {
         "handler": add_birthday,
-        "args_required": {"id": prometei_id_validator, "birthday": birthday_validator},
+        "args_required": {"promid": prometei_id_validator, "birthday": birthday_validator},
         "args_optional": {},
         "step_prompts": {
-            "id": "👤Enter the id of the contact: ",
+            "promid": "👤Enter the id of the contact: ",
             "birthday": "🎂Enter the birthday: ",
         },
         "description": "Change contact birthday",
     },
     "show_phone": {
         "handler": show_phone,
-        "args_required": {"id": prometei_id_validator},
+        "args_required": {"promid": prometei_id_validator},
         "args_optional": {},
         "step_prompts": {
-            "id": "👤Enter the id of the contact: ",
+            "promid": "👤Enter the id of the contact: ",
         },
         "description": "Show user phone number",
     },
@@ -157,10 +157,10 @@ COMMANDS = {
     },
     "change_note":{
         "handler": change_note,
-        "args_required": {"id": prometei_id_validator, "description": name_validator},
+        "args_required": {"promid": prometei_id_validator, "description": name_validator},
         "args_optional": {},
         "step_prompts": {
-            "id": "Enter the id of the note: ",
+            "promid": "Enter the id of the note: ",
             "description": "Enter new description: ",
         },
         "description": "Change note description",
@@ -170,16 +170,16 @@ COMMANDS = {
         "args_required": {"title": name_validator},
         "args_optional": {},
         "step_prompts": {
-            "id": "Enter the id of the note: ",
+            "title": "Enter the id of the note: ",
         },
         "description": "Find note by title",
     },
     "remove_note": {
         "handler": remove_note,
-        "args_required": {"id": prometei_id_validator},
+        "args_required": {"promid": prometei_id_validator},
         "args_optional": {},
         "step_prompts": {
-            "id": "Enter the id of the note: ",
+            "promid": "Enter the id of the note: ",
         },
         "description": "Remove note by title",
     },

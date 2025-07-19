@@ -8,4 +8,5 @@ def remove_note(args, address_book: AddressBook, **kwargs):
     if not note:
         return f"Note with title: {note.title.value} and id {promid} not found"
     address_book.delete_note(promid)
+    address_book.manager.delete_item("notes")
     return f"Note with title: {note.title.value} and id {promid} deleted"
