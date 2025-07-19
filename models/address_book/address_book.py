@@ -52,11 +52,7 @@ class AddressBook(UserDict):
     self.notes[note.id] = note
 
   def find_note(self, title):
-    normalized = title.strip().lower()
-    for note in self.notes.values():
-        if note.title.value.strip().lower() == normalized:
-            return note
-    return None
+    return [notes_to_dict(record) for record in self.notes.values() if record.title.value == title]
 
   def delete_note(self, title):
       normalized = title.strip().lower()

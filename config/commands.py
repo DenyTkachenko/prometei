@@ -167,7 +167,9 @@ COMMANDS = {
         "handler": find_note,
         "args_required": {"title": name_validator},
         "args_optional": {},
-        "step_prompts": {},
+        "step_prompts": {
+          "title": "🔍Enter title: "
+        },
         "description": "Find note by title",
     },
     "remove-note": {
