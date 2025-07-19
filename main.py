@@ -1,9 +1,10 @@
 # main.py
-
+import config.commands
 from storage.pickle_storage                import PickleStorage
 from models.address_book.address_book      import AddressBook
 from views.cli_interface                   import CLIInterface
 from controllers.core                      import CommandContext, CommandProcessor, ProcessorResult
+from views.completer.prompt_session        import get_prompt_session
 
 
 def create_context() -> CommandContext:
@@ -22,7 +23,7 @@ def main() -> None:
     Runs a loop, prompting for commands or arguments, and dispatching them to the processor.
     """
     context   = create_context()
-    interface = CLIInterface()
+    interface = CLIInterface(get_prompt_session(commands=list(config.commands.COMMANDS.keys())))
     processor = CommandProcessor(context)
 
     # First prompt: ask for a command
