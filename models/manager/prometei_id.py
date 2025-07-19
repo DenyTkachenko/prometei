@@ -9,7 +9,7 @@ class PrometeiId(Field):
         if not isinstance(promid, int):
             raise PrometeiIDValueException()
         self.promid = promid
-        self.promguuid = str(uuid.UUID)
+        self.promguuid = str(uuid.uuid4())
         super().__init__((self.promid, self.promguuid))
 
     @property
