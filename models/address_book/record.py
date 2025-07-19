@@ -5,15 +5,21 @@ from models.address_book.name import Name
 from models.address_book.phone import Phone
 from models.address_book.birthday import Birthday
 from models.email import Email
+from models.manager.prometei_id import PrometeiId
 from utils.custom_exceptions import EmailValueException, PhoneValueException
 
 class Record:
-    def __init__(self, name: str):
+    def __init__(self, name: str, promid: PrometeiId):
         self.name = Name(name)
         self.phones: list[Phone] = []
         self.emails: list[Email] = []
         self.birthday: Birthday | None = None
         self.address: Address | None = None
+        self._promid = promid
+
+    @property
+    def get_promid(self):
+        return self._promid
 
     def set_name(self, new_name: str) -> None:
         self.name = Name(new_name)
@@ -85,7 +91,7 @@ class Record:
         return False
 
     def __str__(self) -> str:
-        parts = [f"{self.name.value}"]
+        parts = [f"{self._promid.value[0]}", f"{self.name.value}"]
         if self.phones:
             phones_str = '; '.join(p.value for p in self.phones)
             parts.append(f"Phones: {phones_str}")
