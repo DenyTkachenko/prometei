@@ -3,13 +3,27 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
+
 where = ["."]
-include = ["config", "models", "utils", "storage", "views",  "controllers"]
+
+include = [
+  "config", "config.*",
+  "controllers", "controllers.*",
+  "backups", "backups.*",
+  "models", "models.*",
+  "storage", "storage.*",
+  "utils", "utils.*",
+  "views", "views.*"
+]
+
+[tool.setuptools]
+
+py-modules = ["main"]
 
 [project]
-name='Prometei'
-version='0.1.0'
-description='Console assistant for recording contacts and notes.'
+name = "prometei"
+version = "0.1.0"
+description = "Console assistant for recording contacts and notes."
 readme = "README.md"
 requires-python = ">=3.7"
 dependencies = [
@@ -18,7 +32,5 @@ dependencies = [
 ]
 
 [project.scripts]
-prometei = "Prometei.cli:main"
 
-[project.urls]
-"Homepage" = "https://github.com/DenyTkachenko/prometei"
+prometei = "main:main"
