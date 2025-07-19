@@ -35,6 +35,14 @@ def add_contact(args, address_book: AddressBook, **kwargs):
         return f"✅ Contact '{name}' added with {details}."
     return f"✅ Contact '{name}' added with no additional details."
 
+@input_error("remove_contact", ["promid"])
+def remove_contact(args, address_book: AddressBook, **kwargs):
+    promid = args[0]
+    record = address_book.find_record_by_id(promid)
+    address_book.manager.delete_item("contacts")
+    return f"Note with title: {record.name.value} and id {promid} deleted"
+
+
 @input_error('add', ['promid'], ['name','phone', 'birthday', 'email', 'address'])
 def modify_contact(args, address_book: AddressBook, **kwargs):
     promid, name, phone, birthday, email, address, *_ = args

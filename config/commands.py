@@ -3,7 +3,7 @@ from controllers.commands.address_book.show_all import show_all
 from controllers.commands.exit import exit_handler
 from controllers.commands.email import change_email, remove_email
 from controllers.commands.phone import change_phone, show_phone
-from controllers.commands.record import add_contact, modify_contact
+from controllers.commands.record import add_contact, modify_contact, remove_contact
 from controllers.commands.birthday import add_birthday, show_birthdays
 from controllers.commands.find_user import find_user
 from utils.validators import name_validator, phone_validator, birthday_validator, days_validator, email_validator, \
@@ -44,6 +44,15 @@ COMMANDS = {
         },
         "description": "Add a new contact",
     },
+    "remove_contact": {
+        "handler": remove_contact,
+        "args_required": {"promid": prometei_id_validator},
+        "args_optional": {},
+        "step_prompts": {
+            "promid": "Enter the id of the contact : ",
+        },
+        "description": "Remove contact by id"
+    },
     "modify-contact": {
         "handler": modify_contact,
         "args_required": {"promid": prometei_id_validator},
@@ -81,7 +90,7 @@ COMMANDS = {
         "args_required": {"promid": prometei_id_validator, "old_email": email_validator, "new_email": email_validator},
         "args_optional": {},
         "step_prompts": {
-            "promidid": "👤Enter the id of the contact: ",
+            "promid": "👤Enter the id of the contact: ",
             "old_phone": "📧Enter the old email: ",
             "new_phone": "📧Enter the new email: ",
         },
