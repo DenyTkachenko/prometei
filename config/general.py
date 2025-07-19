@@ -11,4 +11,5 @@ table_headers_map = {
     "congratulation_date": "🎉 Congratulation Date",
     "title": "💬 Title",
     "description": "📝 Description",
+    "tags": "🏷️ Tags",
 }

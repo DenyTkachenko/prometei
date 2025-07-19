@@ -18,10 +18,12 @@ def record_to_dict(record):
 
 
 def notes_to_dict(record):
-    fields = ["title", "description"]
+    fields = ["title", "description", "tags"]
     return {
         field: (
-            getattr(getattr(record, field, None), "value", "-")
+            ", ".join(tag.value for tag in getattr(record, field, [])) or "-"
+            if field == 'tags'
+            else getattr(getattr(record, field, None), "value", "-")
         )
         for field in fields
     }
