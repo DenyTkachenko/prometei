@@ -71,3 +71,8 @@ def days_validator(value):
     if not value.isdigit():
         raise ValueError("Value must be an integer.")
     return int(value)
+
+def prometei_id_validator(value):
+    if not value.isdigit():
+        raise ValueError("Value must be an integer.")
+    return int(value)
