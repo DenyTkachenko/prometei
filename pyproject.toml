@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["config", "models", "utils", "storage", "views",  "controllers"]
+
+[project]
+name='Prometei'
+version='0.1.0'
+description='Console assistant for recording contacts and notes.'
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+  "colorama==0.4.6",
+  "prettytable==3.16.0",
+]
+
+[project.scripts]
+prometei = "Prometei.cli:main"
+
+[project.urls]
+"Homepage" = "https://github.com/DenyTkachenko/prometei"
