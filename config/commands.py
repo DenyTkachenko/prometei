@@ -167,7 +167,7 @@ COMMANDS = {
     },
     "find_note": {
         "handler": find_note,
-        "args_required": {"id": prometei_id_validator},
+        "args_required": {"title": name_validator},
         "args_optional": {},
         "step_prompts": {
             "id": "Enter the id of the note: ",
