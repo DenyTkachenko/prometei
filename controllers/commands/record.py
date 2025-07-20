@@ -55,6 +55,8 @@ def modify_contact(args, address_book: AddressBook, **kwargs):
 
     # Collect changes for message
     changes = []
+    if name:
+        record.name = name
     if phone:
         record.add_phone(phone)
         changes.append(f"📞 phone: {phone}")

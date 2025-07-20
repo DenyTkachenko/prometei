@@ -10,7 +10,7 @@ from utils.custom_exceptions import EmailValueException, PhoneValueException
 
 class Record:
     def __init__(self, name: str, promid: PrometeiId):
-        self.name = Name(name)
+        self._name = Name(name)
         self.phones: list[Phone] = []
         self.emails: list[Email] = []
         self.birthday: Birthday | None = None
@@ -20,6 +20,15 @@ class Record:
     @property
     def promid(self):
         return self._promid
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        if isinstance(name, str):
+            self._name = Name(name)
 
     def set_name(self, new_name: str) -> None:
         self.name = Name(new_name)
