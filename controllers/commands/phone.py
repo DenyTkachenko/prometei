@@ -2,7 +2,7 @@ from models.address_book.address_book import AddressBook
 from utils.decorators import input_error
 from utils.custom_exceptions import UserNotExistException
 
-@input_error('phone', ['promid'])
+@input_error('show-phone', ['promid'])
 def show_phone(args, address_book: AddressBook,  **keyword):
     promid = args[0]
     record = address_book.find_record_by_id(str(promid))

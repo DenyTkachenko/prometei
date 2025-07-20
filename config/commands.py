@@ -124,7 +124,7 @@ COMMANDS = {
         },
         "description": "Change contact birthday",
     },
-    "show_phone": {
+    "show-phone": {
         "handler": show_phone,
         "args_required": {"promid": prometei_id_validator},
         "args_optional": {},
@@ -155,11 +155,12 @@ COMMANDS = {
     },
     "change-note":{
         "handler": change_note,
-        "args_required": {"promid": prometei_id_validator, "description": name_validator},
-        "args_optional": {},
+        "args_required": {"promid": prometei_id_validator},
+        "args_optional": {"title": name_validator,"description": name_validator},
         "step_prompts": {
             "promid": "Enter the id of the note: ",
-            "description": "Enter new description: ",
+            "title": "Enter new title (optional): ",
+            "description": "Enter new description (optional): ",
         },
         "description": "Change note description",
     },
