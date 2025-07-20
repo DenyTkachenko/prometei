@@ -52,7 +52,7 @@ def modify_contact(args, address_book, **kwargs):
         record.add_email(email)
         changes.append(f"📧 email: {email}")
     if address:
-        record.add_email(address)
+        record.set_address(address)
         changes.append(f"📫 address: {address}")
 
     if not changes:
