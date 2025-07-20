@@ -1,61 +1,75 @@
-# main.py
-
 from storage.pickle_storage                import PickleStorage
 from models.address_book.address_book      import AddressBook
-from views.cli_interface                   import CLIInterface
-from controllers.core                      import CommandContext, CommandProcessor, ProcessorResult
+from controllers.core                      import CommandContext, CommandProcessor
+from views.cli_interface                   import CLIInterface, BaseInterface
+from controllers.telegram.telegram_wrapper import TelegramBot
+from config.general                        import MODE, TG_TOKEN
 
 
 def create_context() -> CommandContext:
-    """
-    Initialize storage and load the address book.
-    Returns a CommandContext holding shared state.
-    """
     storage      = PickleStorage("addressbook.pkl", factory=AddressBook, backup=True)
     address_book = storage.load()
     return CommandContext(storage=storage, address_book=address_book)
 
 
-def main() -> None:
-    """
-    Entry point for the CLI.
-    Runs a loop, prompting for commands or arguments, and dispatching them to the processor.
-    """
+def run_loop(interface: BaseInterface, initial_prompt: str) -> None:
     context   = create_context()
-    interface = CLIInterface()
     processor = CommandProcessor(context)
 
-    # First prompt: ask for a command
-    result = ProcessorResult("📥 Enter a command (type 'help'): ", expect_input=True)
+    # Start with the initial prompt
+    prompt = initial_prompt
 
-    # Main loop: continue until a handler sets context.running = False
     try:
         while context.running:
-            if result.expect_input:
-                # If processor asked for input, use that as our prompt
-                user_text = interface.receive_message(user_id=0, prompt=result.text)
-            else:
-                # Otherwise, display the result and then re‑prompt for a new command
-                if result.text:
-                    interface.send_message(user_id=0, text=result.text)
-                user_text = interface.receive_message(
-                    user_id=0,
-                    prompt="📥 Enter a command (type 'help'): "
-                )
+            # 1) Receive from interface (CLI display prompt, Telegram ignore)
+            user_id, text = interface.receive_message(prompt=prompt)
 
-            # Feed the user’s text back into the processor
-            result = processor.process_message(user_id=0, message=user_text)
+            # 2) Process
+            result = processor.process_message(user_id, text)
+
+            if result.expect_input:
+                # multi‑step mode
+                prompt = result.text or ""
+                continue
+
+            # one-step mode
+            if result.text:
+                interface.send_message(user_id, result.text)
+
+            prompt = initial_prompt
+
     except Exception:
+        # Emergency saving
         try:
             context.storage.save(context.address_book)
-            interface.send_message(user_id=0, text="❗An unexpected error occurred, the data has been saved.")
+            print('❗An unexpected error occurred, the data has been saved.')
         except Exception as save_err:
-            interface.send_message(
-                user_id=0,
-                text=f"❗Error when saving data: {save_err}"
-            )
+            print(f"❗Error when saving data: {save_err}")
         raise
 
+def cli_main() -> None:
+    """Run the assistant in command‑line mode."""
+    default_prompt = "📥 Enter a command (type 'help'): "
+    run_loop(CLIInterface(), default_prompt)
+
+
+def telegram_main(token: str) -> None:
+
+    context   = create_context()
+    processor = CommandProcessor(context)
+    bot       = TelegramBot(token, processor)
+
+    try:
+        bot.run_polling()
+    except Exception:
+        print('❗An unexpected error occurred, the data has been saved.')
+        context.storage.save(context.address_book)
+        raise
 
 if __name__ == "__main__":
-    main()
+    if MODE == "telegram":
+        if not TG_TOKEN:
+            raise RuntimeError("TG_TOKEN is not set")
+        telegram_main(TG_TOKEN)
+    else:
+        cli_main()

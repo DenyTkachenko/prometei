@@ -18,20 +18,6 @@ from controllers.commands.notes.remove_note import remove_note
 from controllers.commands.notes.show_all_notes import show_all_notes
 
 COMMANDS = {
-    "exit": {
-        "handler": exit_handler,
-        "args_required": {},
-        "args_optional": {},
-        "step_prompts": {},
-        "description": "Exit and save",
-    },
-    "close": {
-        "handler": exit_handler,
-        "args_required": {},
-        "args_optional": {},
-        "step_prompts": {},
-        "description": "Exit and save",
-    },
     "add": {
         "handler": add_contact,
         "args_required": {"name": name_validator, "phone": phone_validator},
@@ -43,7 +29,7 @@ COMMANDS = {
             "email": "📧Enter contact email (optional): ",
             "address": "📫Enter contact address (optional): ",
         },
-        "description": "Add a new contact",
+        "description": "🪪 Add a new contact",
     },
     "modify-contact": {
         "handler": modify_contact,
@@ -211,5 +197,19 @@ COMMANDS = {
         "args_optional": {},
         "step_prompts": {},
         "description": "Show available commands and their descriptions",
-    }
+    },
+    "exit": {
+        "handler": exit_handler,
+        "args_required": {},
+        "args_optional": {},
+        "step_prompts": {},
+        "description": "Exit and save",
+    },
+    "close": {
+        "handler": exit_handler,
+        "args_required": {},
+        "args_optional": {},
+        "step_prompts": {},
+        "description": "Exit and save",
+    },
 }
