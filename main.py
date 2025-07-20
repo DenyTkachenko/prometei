@@ -1,5 +1,5 @@
 from storage.pickle_storage                import PickleStorage
-from models.address_book                   import AddressBook
+from models.address_book.address_book      import AddressBook
 from controllers.core                      import CommandContext, CommandProcessor
 from views.cli_interface                   import CLIInterface, BaseInterface
 from controllers.telegram.telegram_wrapper import TelegramBot

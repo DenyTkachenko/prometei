@@ -1,9 +1,11 @@
-from models.name import Name
-from models.phone import Phone
-from models.email import Email
+
+
 from models.address import Address
-from models.birthday import Birthday
-from utils.custom_exceptions import PhoneValueException, EmailValueException
+from models.address_book.name import Name
+from models.address_book.phone import Phone
+from models.address_book.birthday import Birthday
+from models.email import Email
+from utils.custom_exceptions import EmailValueException, PhoneValueException
 
 class Record:
     def __init__(self, name: str):

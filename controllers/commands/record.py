@@ -1,4 +1,4 @@
-from models.record import Record
+from models.address_book.record import Record
 from utils.decorators import input_error
 from utils.custom_exceptions import UserNotExistException
 
@@ -52,7 +52,7 @@ def modify_contact(args, address_book, **kwargs):
         record.add_email(email)
         changes.append(f"📧 email: {email}")
     if address:
-        record.add_email(address)
+        record.set_address(address)
         changes.append(f"📫 address: {address}")
 
     if not changes:
