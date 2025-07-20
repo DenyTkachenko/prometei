@@ -10,10 +10,14 @@ def search(record):
             continue
 
         try:
-            if attr == "phones" or attr == "emails":
-                parts.append(" ".join(p.value for p in value))
+            if attr in ("phones", "emails"):
+                parts.append(" ".join(str(p.value) for p in value))
             else:
-                parts.append(value.value)
+                val = value.value
+                if isinstance(val, (list, tuple)):
+                    parts.append(" ".join(str(v) for v in val))
+                else:
+                    parts.append(str(val))
         except AttributeError:
             continue
 
