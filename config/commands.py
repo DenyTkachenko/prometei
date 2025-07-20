@@ -9,6 +9,8 @@ from controllers.commands.birthday import add_birthday, show_birthdays
 from controllers.commands.find_user import find_user
 from utils.validators import name_validator, phone_validator, birthday_validator, days_validator, email_validator, \
     address_validator, prometei_id_validator
+from controllers.commands.help import help as raw_help
+from utils.validators import name_validator, phone_validator, birthday_validator, days_validator,email_validator, address_validator
 from controllers.commands.exit import exit_handler
 
 from controllers.commands.notes.add_note import add_note
@@ -18,20 +20,6 @@ from controllers.commands.notes.remove_note import remove_note
 from controllers.commands.notes.show_all_notes import show_all_notes
 
 COMMANDS = {
-    "exit": {
-        "handler": exit_handler,
-        "args_required": {},
-        "args_optional": {},
-        "step_prompts": {},
-        "description": "Exit and save",
-    },
-    "close": {
-        "handler": exit_handler,
-        "args_required": {},
-        "args_optional": {},
-        "step_prompts": {},
-        "description": "Exit and save",
-    },
     "add": {
         "handler": add_contact,
         "args_required": {"name": name_validator, "phone": phone_validator},
@@ -43,7 +31,7 @@ COMMANDS = {
             "email": "📧Enter contact email (optional): ",
             "address": "📫Enter contact address (optional): ",
         },
-        "description": "Add a new contact",
+        "description": "🪪 Add a new contact",
     },
     "remove_contact": {
         "handler": remove_contact,
@@ -217,5 +205,26 @@ COMMANDS = {
             "tag": "Enter tag: "
         },
         "description": "Find notes by tag",
-    }
+    },
+    "help": {
+        "handler": lambda *args, **kwargs: raw_help(COMMANDS),
+        "args_required": {},
+        "args_optional": {},
+        "step_prompts": {},
+        "description": "Show available commands and their descriptions",
+    },
+    "exit": {
+        "handler": exit_handler,
+        "args_required": {},
+        "args_optional": {},
+        "step_prompts": {},
+        "description": "Exit and save",
+    },
+    "close": {
+        "handler": exit_handler,
+        "args_required": {},
+        "args_optional": {},
+        "step_prompts": {},
+        "description": "Exit and save",
+    },
 }

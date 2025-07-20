@@ -1,5 +1,7 @@
 colorama==0.4.6
 prettytable==3.16.0
+python-telegram-bot>=22.0
+
 wcwidth==0.2.13
 prompt-toolkit==3.0.51
 
