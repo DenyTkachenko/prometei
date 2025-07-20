@@ -143,7 +143,6 @@ class CommandProcessor:
             # Determine which field to fill next
             if session.next_field:
                 current = session.next_field
-                session.next_field = None
             else:
                 # First missing in order
                 current = next(arg for arg in session.arg_order if arg not in session.args)
@@ -155,6 +154,7 @@ class CommandProcessor:
                 validator = session.validators.get(current)
                 try:
                     session.args[current] = validator(text) if validator else text
+                    session.next_field = None
                 except Exception as err:
                     prompt = session.prompts.get(current, f"Enter {current}: ")
                     return ProcessorResult(
