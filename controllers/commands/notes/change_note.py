@@ -1,12 +1,15 @@
+from models.address_book.address_book import AddressBook
 from utils.decorators import input_error
 
-@input_error('change-note', ['title', 'description'])
-def change_note(args, address_book, **kwargs):
-    title, description, *_ = args
-    note = address_book.find_note(title)
+@input_error('change-note', ['promid'], ['title', 'description'])
+def change_note(args, address_book: AddressBook, **kwargs):
+
+    promid, title, description, *_ = args
+    note = address_book.find_note_by_id(str(promid))
     if not note:
-        return f"Note with title: {title} not found"
-    elif not description:
-        return f"Description cannot be empty"
-    note.change_description(description)
-    return f"Note with title: {title} changed: {note}"
+        return f"Note with id: {promid} not found"
+    elif title:
+        note.change_title(title)
+    elif description:
+        note.change_description(description)
+    return f"Note with title: {note.title.value} changed: {note}"

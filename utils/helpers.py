@@ -6,11 +6,13 @@ def parse_input(user_input):
     return cmd, args
 
 def record_to_dict(record):
-    fields = ["name", "phones", "emails", "birthday", "address"]
+    fields = ["promid", "name", "phones", "emails", "birthday", "address"]
     return {
         field: (
             ", ".join(phone.value for phone in getattr(record, field, []))
             if field in ("phones", "emails")
+            else getattr(getattr(record, field, None), "value", "-")[0]
+            if field == "promid"
             else getattr(getattr(record, field, None), "value", "-")
         )
         for field in fields
@@ -18,11 +20,11 @@ def record_to_dict(record):
 
 
 def notes_to_dict(record):
-    fields = ["title", "description", "tags"]
+    fields = ["promid", "title", "description"]
     return {
         field: (
-            ", ".join(tag.value for tag in getattr(record, field, [])) or "-"
-            if field == 'tags'
+            getattr(getattr(record, field, None), "value", "-")[0]
+            if field == "promid"
             else getattr(getattr(record, field, None), "value", "-")
         )
         for field in fields

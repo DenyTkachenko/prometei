@@ -4,6 +4,7 @@ INCOME_BIRTHDAY_FORMAT = '%d.%m.%Y'
 OUT_BIRTHDAY_FORMAT = '%d.%m.%Y'
 
 table_headers_map = {
+    "Id": "Id",
     "name": "👤 Name",
     "phones": "📞 Phones",
     "emails": "📩 Emails",

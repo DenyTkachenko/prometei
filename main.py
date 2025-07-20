@@ -1,9 +1,11 @@
+import config.commands
 from storage.pickle_storage                import PickleStorage
 from models.address_book.address_book      import AddressBook
 from controllers.core                      import CommandContext, CommandProcessor
 from views.cli_interface                   import CLIInterface, BaseInterface
 from controllers.telegram.telegram_wrapper import TelegramBot
 from config.general                        import MODE, TG_TOKEN
+from views.completer.prompt_session import get_prompt_session
 
 
 def create_context() -> CommandContext:
@@ -50,7 +52,7 @@ def run_loop(interface: BaseInterface, initial_prompt: str) -> None:
 def cli_main() -> None:
     """Run the assistant in command‑line mode."""
     default_prompt = "📥 Enter a command (type 'help'): "
-    run_loop(CLIInterface(), default_prompt)
+    run_loop(CLIInterface(get_prompt_session(list(config.commands.COMMANDS.keys()))), default_prompt)
 
 
 def telegram_main(token: str) -> None:
