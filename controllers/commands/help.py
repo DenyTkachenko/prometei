@@ -13,7 +13,7 @@ def help(commands_dict):
                 validator_name = validator.__name__ if callable(validator) else str(validator)
                 print(f"    - {arg} (validator: {validator_name})")
         else:
-            print("  Required arguments: None")
+            print("  Required arguments: --//--")
         
         if args_optional:
             print("  Optional arguments:")
@@ -21,6 +21,6 @@ def help(commands_dict):
                 validator_name = validator.__name__ if callable(validator) else str(validator)
                 print(f"    - {arg} (validator: {validator_name})")
         else:
-            print("  Optional arguments: None")
+            print("  Optional arguments: --//--")
         
         print("-" * 40)
