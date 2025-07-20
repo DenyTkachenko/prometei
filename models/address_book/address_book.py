@@ -1,11 +1,13 @@
 from collections import UserDict
 
+
 from models.manager.manager_prometei_id import ManagerPrometeiId
 from utils.date import get_upcoming_birthdays
 from utils.custom_exceptions import BirthdayPeriodException
 from config.general import OUT_BIRTHDAY_FORMAT
 from utils.helpers import notes_to_dict, record_to_dict
 from utils.search import search
+import copy
 
 class AddressBook(UserDict):
   def __init__(self):
@@ -47,7 +49,9 @@ class AddressBook(UserDict):
       return self.contacts.pop(promid, None)
 
   def show_all(self):
-    return [record_to_dict(record) for record in self.contacts.values()]
+    deepcopy_contacts = copy.deepcopy(self.contacts)
+    deepcopy_contacts = dict(sorted(deepcopy_contacts.items(), key=lambda item: int(item[0])))
+    return [record_to_dict(record) for record in deepcopy_contacts.values()]
 
   def get_upcoming_birthdays(self, days=7):
     if not isinstance(days, int):
@@ -85,7 +89,9 @@ class AddressBook(UserDict):
       return self.notes.pop(promid, None)
 
   def show_all_notes(self):
-    return [notes_to_dict(record) for record in self.notes.values()]
+    deepcopy_notes = copy.deepcopy(self.notes)
+    deepcopy_notes = dict(sorted(deepcopy_notes.items(), key=lambda item: int(item[0])))
+    return [notes_to_dict(record) for record in deepcopy_notes.values()]
   
   def find_notes_by_tag(self, tag):
     return [notes_to_dict(record) for record in self.notes.values() if record.is_tag_in_note(tag)]
