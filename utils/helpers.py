@@ -20,7 +20,7 @@ def record_to_dict(record):
 
 
 def notes_to_dict(record):
-    fields = ["title", "description"]
+    fields = ["promid", "title", "description"]
     return {
         field: (
             getattr(getattr(record, field, None), "value", "-")[0]
