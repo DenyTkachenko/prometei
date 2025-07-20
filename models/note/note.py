@@ -7,21 +7,13 @@ import uuid
 
 class Note:
   def __init__(self, title, description, promid: PrometeiId):
-    self._title = Title(title)
+    self.title = Title(title)
     self.description = Description(description)
     self._promid = promid
 
   @property
   def promid(self):
     return self._promid
-
-  @property
-  def title(self):
-    return self._title
-
-  @title.setter
-  def title(self, title):
-     self._title = Title(title)
 
   def __str__(self):
     return f"{self._promid.value[0]} | {self.title.value}: {self.description.value}"

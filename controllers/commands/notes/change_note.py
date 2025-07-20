@@ -9,7 +9,7 @@ def change_note(args, address_book: AddressBook, **kwargs):
     if not note:
         return f"Note with id: {promid} not found"
     elif title:
-        note.title = title
+        note.change_title(title)
     elif description:
         note.change_description(description)
     return f"Note with title: {note.title.value} changed: {note}"
