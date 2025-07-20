@@ -19,24 +19,33 @@ def run_loop(interface: BaseInterface, initial_prompt: str) -> None:
     # Start with the initial prompt
     prompt = initial_prompt
 
-    while context.running:
-        # 1) Receive from interface (CLI display prompt, Telegram ignore)
-        user_id, text = interface.receive_message(prompt=prompt)
+    try:
+        while context.running:
+            # 1) Receive from interface (CLI display prompt, Telegram ignore)
+            user_id, text = interface.receive_message(prompt=prompt)
 
-        # 2) Process
-        result = processor.process_message(user_id, text)
+            # 2) Process
+            result = processor.process_message(user_id, text)
 
-        if result.expect_input:
-            # multi‑step mode
-            prompt = result.text or ""
-            continue
+            if result.expect_input:
+                # multi‑step mode
+                prompt = result.text or ""
+                continue
 
-        # one-step mode
-        if result.text:
-            interface.send_message(user_id, result.text)
+            # one-step mode
+            if result.text:
+                interface.send_message(user_id, result.text)
 
-        prompt = initial_prompt
+            prompt = initial_prompt
 
+    except Exception:
+        # Emergency saving
+        try:
+            context.storage.save(context.address_book)
+            print('❗An unexpected error occurred, the data has been saved.')
+        except Exception as save_err:
+            print(f"❗Error when saving data: {save_err}")
+        raise
 
 def cli_main() -> None:
     """Run the assistant in command‑line mode."""
@@ -49,8 +58,13 @@ def telegram_main(token: str) -> None:
     context   = create_context()
     processor = CommandProcessor(context)
     bot       = TelegramBot(token, processor)
-    bot.run_polling()
 
+    try:
+        bot.run_polling()
+    except Exception:
+        print('❗An unexpected error occurred, the data has been saved.')
+        context.storage.save(context.address_book)
+        raise
 
 if __name__ == "__main__":
     if MODE == "telegram":

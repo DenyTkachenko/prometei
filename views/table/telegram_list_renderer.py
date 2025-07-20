@@ -4,7 +4,7 @@ from config.general import table_headers_map
 class TelegramListRenderer(BaseRenderer):
     def render(self, records: list[dict]) -> str:
         if not records:
-            return "📭 <i>No contacts found.</i>"
+            return "🤷‍♂️ No contacts found."
 
         lines = []
         for rec in records:
