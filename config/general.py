@@ -19,5 +19,5 @@ class StreamControlCmd(Enum):
     BACK = "Back"
     FINISH = "Finish"
 
-MODE = "telegram"
+MODE = "cli"
 TG_TOKEN = "7994558666:AAHfkqLVemKNhkXp2A6GaGzVVibjoE98uhQ"
