@@ -1,3 +1,5 @@
+import re
+from models.note.tag import Tag
 from models.manager.prometei_id import PrometeiId
 from models.note.title import Title
 from models.note.description import Description
@@ -21,3 +23,14 @@ class Note:
 
   def change_title(self, new_title):
     self.title = Title(new_title)
+
+  def parse_tags(self):
+    found_tags = re.findall(r'#\w+', self.description.value)
+    tags_set = set({tag for tag in found_tags})
+    tags = list(Tag(tag) for tag in tags_set)
+    return tags or []
+
+  def is_tag_in_note(self, tag):
+    if not tag.startswith("#"):
+        tag = "#" + tag
+    return any(tag == tag_value.value for tag_value in self.tags)

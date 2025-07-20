@@ -69,11 +69,7 @@ class AddressBook(UserDict):
     self.notes[note.promid.value[0]] = note
 
   def find_note(self, title):
-    normalized = title.strip().lower()
-    for note in self.notes.values():
-        if note.title.value.strip().lower() == normalized:
-            return note
-    return None
+    return [notes_to_dict(record) for record in self.notes.values() if record.title.value == title]
 
   def find_note_by_id(self, promid):
       return self.notes.get(promid)
@@ -90,3 +86,6 @@ class AddressBook(UserDict):
 
   def show_all_notes(self):
     return [notes_to_dict(record) for record in self.notes.values()]
+  
+  def find_notes_by_tag(self, tag):
+    return [notes_to_dict(record) for record in self.notes.values() if record.is_tag_in_note(tag)]

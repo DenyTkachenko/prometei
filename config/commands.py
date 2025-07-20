@@ -2,6 +2,7 @@ from controllers.commands.address import add_address, remove_address
 from controllers.commands.address_book.show_all import show_all
 from controllers.commands.exit import exit_handler
 from controllers.commands.email import change_email, remove_email
+from controllers.commands.notes.find_notes_by_tag import find_notes_by_tag
 from controllers.commands.phone import change_phone, show_phone
 from controllers.commands.record import add_contact, modify_contact, remove_contact
 from controllers.commands.birthday import add_birthday, show_birthdays
@@ -154,7 +155,7 @@ COMMANDS = {
         "description": "Show upcoming birthdays",
     },
     # ********************
-    "add_note": {
+    "add-note": {
         "handler": add_note,
         "args_required": {"title": name_validator, "description": name_validator},
         "args_optional": {},
@@ -164,7 +165,7 @@ COMMANDS = {
         },
         "description": "Add a new note",
     },
-    "change_note":{
+    "change-note":{
         "handler": change_note,
         "args_required": {"promid": prometei_id_validator, "description": name_validator},
         "args_optional": {},
@@ -174,16 +175,19 @@ COMMANDS = {
         },
         "description": "Change note description",
     },
-    "find_note": {
+    "find-note": {
         "handler": find_note,
         "args_required": {"title": name_validator},
         "args_optional": {},
         "step_prompts": {
             "title": "Enter the id of the note: ",
         },
+        "step_prompts": {
+          "title": "🔍Enter title: "
+        },
         "description": "Find note by title",
     },
-    "remove_note": {
+    "remove-note": {
         "handler": remove_note,
         "args_required": {"promid": prometei_id_validator},
         "args_optional": {},
@@ -192,14 +196,14 @@ COMMANDS = {
         },
         "description": "Remove note by title",
     },
-    "all_notes": {
+    "all-notes": {
         "handler": show_all_notes,
         "args_required": {},
         "args_optional": {},
         "step_prompts": {},
         "description": "Display all notes",
     },
-    "find_user": {
+    "find-user": {
         "handler": find_user,
         "args_required": {"query": str},
         "args_optional": {},
@@ -207,5 +211,14 @@ COMMANDS = {
             "query": " 🔍Enter search query (name, phone, emails, address, birthday): "
         },
         "description": "Find user by query",
+    },
+    "find-notes-by-tag": {
+        "handler": find_notes_by_tag,
+        "args_required": {"tag": str},
+        "args_optional": {},
+        "step_prompts": {
+            "tag": "Enter tag: "
+        },
+        "description": "Find notes by tag",
     }
 }
