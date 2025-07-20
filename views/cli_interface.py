@@ -12,7 +12,7 @@ class CLIInterface(BaseInterface):
     def send_message(self, user_id, text: str) -> None:
         print(text)
 
-    def receive_message(self, user_id, prompt: str = "") -> Tuple[str,str]:
+    def receive_message(self, prompt: str = "") -> Tuple[str,str]:
         if not self.prompt_session:
             return "cli", input(prompt)
         return "cli",  self.prompt_session.prompt(prompt)
