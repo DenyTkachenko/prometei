@@ -16,8 +16,3 @@ class CLIInterface(BaseInterface):
         if not self.prompt_session:
             return "cli", input(prompt)
         return "cli",  self.prompt_session.prompt(prompt)
-
-    #def receive_message(self, prompt: str = "") -> Tuple[str, str]:
-        # Prompt on the same line and return what the user typed
-    #    text = input(prompt)
-    #    return "cli", text
