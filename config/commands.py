@@ -180,10 +180,7 @@ COMMANDS = {
         "args_required": {"title": name_validator},
         "args_optional": {},
         "step_prompts": {
-            "title": "Enter the id of the note: ",
-        },
-        "step_prompts": {
-          "title": "🔍Enter title: "
+            "title": "Enter the title: ",
         },
         "description": "Find note by title",
     },
