@@ -29,21 +29,32 @@ def main() -> None:
     result = ProcessorResult("📥 Enter a command (type 'help'): ", expect_input=True)
 
     # Main loop: continue until a handler sets context.running = False
-    while context.running:
-        if result.expect_input:
-            # If processor asked for input, use that as our prompt
-            user_text = interface.receive_message(user_id=0, prompt=result.text)
-        else:
-            # Otherwise, display the result and then re‑prompt for a new command
-            if result.text:
-                interface.send_message(user_id=0, text=result.text)
-            user_text = interface.receive_message(
-                user_id=0,
-                prompt="📥 Enter a command (type 'help'): "
-            )
+    try:
+        while context.running:
+            if result.expect_input:
+                # If processor asked for input, use that as our prompt
+                user_text = interface.receive_message(user_id=0, prompt=result.text)
+            else:
+                # Otherwise, display the result and then re‑prompt for a new command
+                if result.text:
+                    interface.send_message(user_id=0, text=result.text)
+                user_text = interface.receive_message(
+                    user_id=0,
+                    prompt="📥 Enter a command (type 'help'): "
+                )
 
-        # Feed the user’s text back into the processor
-        result = processor.process_message(user_id=0, message=user_text)
+            # Feed the user’s text back into the processor
+            result = processor.process_message(user_id=0, message=user_text)
+    except Exception:
+        try:
+            context.storage.save(context.address_book)
+            interface.send_message(user_id=0, text="❗An unexpected error occurred, the data has been saved.")
+        except Exception as save_err:
+            interface.send_message(
+                user_id=0,
+                text=f"❗Error when saving data: {save_err}"
+            )
+        raise
 
 
 if __name__ == "__main__":
